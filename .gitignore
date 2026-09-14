@@ -1,95 +1,29 @@
-# Dependencies
-node_modules/
-jspm_packages/
-
-# Build output
-dist/
-dist-ssr/
-.vite/
-
-# Test coverage
-coverage/
-.nyc_output/
-*.lcov
-__screenshots__/
-
-# Cypress
-cypress/videos/
-cypress/screenshots/
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# Runtime data
-pids/
-*.pid
-*.pid.lock
-*.seed
-
-# Node diagnostic reports
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-# TypeScript
-*.tsbuildinfo
-
-# Environment files
-.env
-.env.*
-!.env.example
-
-# Local configuration
-*.local
-
-# Package manager caches
-.npm/
-.pnpm-store/
-.yarn-integrity
-
-# Yarn Plug'n'Play / Yarn Berry
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# Tool caches
-.eslintcache
-.stylelintcache
-.cache/
-.parcel-cache/
-
-# npm package output
-*.tgz
-
-# REPL history
-.node_repl_history
-
-# Vite temporary files
-*.timestamp-*-*.mjs
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-
-# Editor / IDE
-.idea/
-.vscode/*
-!.vscode/extensions.json
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# VS Code extension testing
-.vscode-test/
-
-# OS files
+/.phpunit.cache
+/bootstrap/ssr
+/node_modules
+/public/build
+/public/fonts-manifest.dev.json
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/resources/js/actions
+/resources/js/routes
+/resources/js/wayfinder
+/vendor
 .DS_Store
-Thumbs.db
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/auth.json
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
