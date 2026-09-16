@@ -1,32 +1,46 @@
+x-app-base: &app-base
+    build:
+        context: .
+        dockerfile: Dockerfile
+    restart: unless-stopped
+    working_dir: /var/www/election-map
+    volumes:
+        - .:/var/www/election-map
+    environment:
+        DB_CONNECTION: mysql
+        DB_HOST: database
+        DB_PORT: 3306
+        DB_DATABASE: election_map
+        DB_USERNAME: election_map
+        DB_PASSWORD: election_map
+    depends_on:
+        database:
+            condition: service_healthy
+
 services:
     app:
-        build:
-            context: .
-            dockerfile: Dockerfile
+        <<: *app-base
         container_name: election-map-app
-        restart: unless-stopped
-        working_dir: /var/www
         ports:
             - '8000:8000'
+        command: php artisan serve --host=0.0.0.0 --port=8000
+
+    queue:
+        <<: *app-base
+        container_name: election-map-queue
+        command: php artisan queue:listen --tries=1
+
+    pail:
+        <<: *app-base
+        container_name: election-map-pail
+        command: php artisan pail --timeout=0
+
+    vite:
+        <<: *app-base
+        container_name: election-map-vite
+        ports:
             - '5173:5173'
-        volumes:
-            - .:/var/www
-        depends_on:
-            database:
-                condition: service_healthy
-        environment:
-            DB_CONNECTION: mysql
-            DB_HOST: database
-            DB_PORT: 3306
-            DB_DATABASE: election_map
-            DB_USERNAME: election_map
-            DB_PASSWORD: election_map
-        command: >
-            npx concurrently
-            "php artisan serve --host=0.0.0.0 --port=8000"
-            "php artisan queue:listen --tries=1"
-            "php artisan pail --timeout=0"
-            "npm run dev -- --host=0.0.0.0"
+        command: npm run dev -- --host=0.0.0.0
 
     database:
         image: mariadb:lts

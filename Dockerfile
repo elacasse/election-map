@@ -1,5 +1,12 @@
 FROM php:8.5-cli
 
+RUN printf '%s\n' \
+    'export TERM=xterm-256color' \
+    'if command -v dircolors >/dev/null 2>&1; then eval "$(dircolors -b)"; fi' \
+    "alias ls='ls --color=auto'" \
+    "alias ll='ls -lah --color=auto'" \
+    >> /root/.bashrc
+
 RUN apt-get update \
     && apt-get install -y \
         git \
@@ -21,6 +28,6 @@ RUN apt-get update \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www
+WORKDIR /var/www/election-map
 
 EXPOSE 8000 5173
