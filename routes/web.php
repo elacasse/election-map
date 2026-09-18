@@ -2,10 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'Welcome')->name('home');
+// Public website
+Route::inertia('/', 'Public/Home')
+     ->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
-});
+// Admin website
+Route::prefix('admin')
+     ->name('admin.')
+     ->middleware(['auth', 'verified'])
+     ->group(function () {
+         Route::inertia('dashboard', 'Admin/Dashboard')
+              ->name('dashboard');
+     });
 
-require __DIR__.'/settings.php';
+
+require __DIR__ . '/settings.php';

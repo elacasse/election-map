@@ -2,7 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import AppearanceTabs from '@/components/AppearanceTabs.vue';
 import Heading from '@/components/Heading.vue';
-import { edit } from '@/routes/appearance';
+import { edit } from '@/routes/admin/appearance';
 
 defineOptions({
     layout: {
