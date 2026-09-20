@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Candidate
- * 
+ *
  * @property int $id
  * @property int $election_id
  * @property int $electoral_district_id
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $first_name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property Election $election
  * @property ElectionParty|null $election_party
  * @property ElectoralDistrict $electoral_district
@@ -30,36 +30,47 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Candidate extends Model
 {
-	protected $table = 'candidates';
+    protected $table = 'candidates';
 
-	protected $casts = [
-		'election_id' => 'int',
-		'electoral_district_id' => 'int',
-		'election_party_id' => 'int',
-		'source_candidate_number' => 'int'
-	];
+    protected $casts = [
+        'election_id'             => 'int',
+        'electoral_district_id'   => 'int',
+        'election_party_id'       => 'int',
+        'source_candidate_number' => 'int'
+    ];
 
-	protected $fillable = [
-		'election_id',
-		'electoral_district_id',
-		'election_party_id',
-		'source_candidate_number',
-		'last_name',
-		'first_name'
-	];
+    protected $fillable = [
+        'election_id',
+        'electoral_district_id',
+        'election_party_id',
+        'source_candidate_number',
+        'last_name',
+        'first_name'
+    ];
 
-	public function election()
-	{
-		return $this->belongsTo(Election::class);
-	}
+    public function election()
+    {
+        return $this->belongsTo(Election::class);
+    }
 
-	public function election_party()
-	{
-		return $this->belongsTo(ElectionParty::class);
-	}
+    public function party()
+    {
+        return $this->belongsTo(
+            ElectionParty::class,
+            'election_party_id'
+        );
+    }
 
-	public function electoral_district()
-	{
-		return $this->belongsTo(ElectoralDistrict::class);
-	}
+    public function district()
+    {
+        return $this->belongsTo(
+            ElectoralDistrict::class,
+            'electoral_district_id'
+        );
+    }
+
+    public function results()
+    {
+        return $this->hasMany(CandidateResult::class);
+    }
 }

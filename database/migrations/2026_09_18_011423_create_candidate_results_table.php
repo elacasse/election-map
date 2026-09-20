@@ -6,20 +6,37 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('candidate_results', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+
+            $table->foreignId('snapshot_id')
+                  ->constrained('election_snapshots')
+                  ->cascadeOnDelete();
+
+            $table->foreignId('candidate_id')
+                  ->constrained()
+                  ->cascadeOnDelete();
+
+            $table->unsignedInteger('vote_count');
+
+            $table->decimal('vote_rate', 7, 4);
+
+            $table->unsignedInteger('advance_vote_count');
+
+            $table->unique([
+                'snapshot_id',
+                'candidate_id',
+            ]);
+
+            $table->index([
+                'candidate_id',
+                'snapshot_id',
+            ]);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('candidate_results');

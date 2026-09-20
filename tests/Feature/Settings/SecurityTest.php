@@ -26,8 +26,7 @@ test('security page is displayed', function () {
             ->where('canManagePasskeys', true)
             ->where('passkeys', [])
             ->where('canManageTwoFactor', true)
-            ->where('twoFactorEnabled', false),
-        );
+            ->where('twoFactorEnabled', false),);
 });
 
 test('security page requires password confirmation when enabled', function () {
@@ -63,8 +62,7 @@ test('security page renders without two factor when feature is disabled', functi
             ->where('passkeys', [])
             ->where('canManageTwoFactor', false)
             ->missing('twoFactorEnabled')
-            ->missing('requiresConfirmation'),
-        );
+            ->missing('requiresConfirmation'),);
 });
 
 test('password can be updated', function () {

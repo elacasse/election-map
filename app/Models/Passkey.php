@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Passkey
- * 
+ *
  * @property int $id
  * @property int $user_id
  * @property string $name
@@ -20,30 +20,30 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $last_used_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property User $user
  *
  * @package App\Models
  */
 class Passkey extends Model
 {
-	protected $table = 'passkeys';
+    protected $table = 'passkeys';
 
-	protected $casts = [
-		'user_id' => 'int',
-		'last_used_at' => 'datetime'
-	];
+    protected $casts = [
+        'user_id' => 'int',
+        'last_used_at' => 'datetime'
+    ];
 
-	protected $fillable = [
-		'user_id',
-		'name',
-		'credential_id',
-		'credential',
-		'last_used_at'
-	];
+    protected $fillable = [
+        'user_id',
+        'name',
+        'credential_id',
+        'credential',
+        'last_used_at'
+    ];
 
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

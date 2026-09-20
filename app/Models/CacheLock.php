@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class CacheLock
- * 
+ *
  * @property string $key
  * @property string $owner
  * @property int $expiration
@@ -19,17 +19,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CacheLock extends Model
 {
-	protected $table = 'cache_locks';
-	protected $primaryKey = 'key';
-	public $incrementing = false;
-	public $timestamps = false;
+    protected $table = 'cache_locks';
+    protected $primaryKey = 'key';
+    public $incrementing = false;
+    public $timestamps = false;
 
-	protected $casts = [
-		'expiration' => 'int'
-	];
+    protected $casts = [
+        'expiration' => 'int'
+    ];
 
-	protected $fillable = [
-		'owner',
-		'expiration'
-	];
+    protected $fillable = [
+        'owner',
+        'expiration'
+    ];
 }

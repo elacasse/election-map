@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ElectionSnapshot
- * 
+ *
  * @property int $id
  * @property int $election_id
  * @property Carbon $captured_at
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $results_final
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property Election $election
  * @property Collection|DistrictResult[] $district_results
  * @property ElectionStatistic|null $election_statistic
@@ -33,43 +33,51 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ElectionSnapshot extends Model
 {
-	protected $table = 'election_snapshots';
+    protected $table = 'election_snapshots';
 
-	protected $casts = [
-		'election_id' => 'int',
-		'captured_at' => 'datetime',
-		'source_last_modified_at' => 'datetime',
-		'source_updated_at' => 'datetime',
-		'results_final' => 'bool'
-	];
+    protected $casts = [
+        'election_id' => 'int',
+        'captured_at' => 'datetime',
+        'source_last_modified_at' => 'datetime',
+        'source_updated_at' => 'datetime',
+        'results_final' => 'bool'
+    ];
 
-	protected $fillable = [
-		'election_id',
-		'captured_at',
-		'source_etag',
-		'source_last_modified_at',
-		'source_updated_at',
-		'results_hash',
-		'results_final'
-	];
+    protected $fillable = [
+        'election_id',
+        'captured_at',
+        'source_etag',
+        'source_last_modified_at',
+        'source_updated_at',
+        'results_hash',
+        'results_final'
+    ];
 
-	public function election()
-	{
-		return $this->belongsTo(Election::class);
-	}
+    public function election()
+    {
+        return $this->belongsTo(Election::class);
+    }
 
-	public function district_results()
-	{
-		return $this->hasMany(DistrictResult::class, 'snapshot_id');
-	}
+    public function districtResults()
+    {
+        return $this->hasMany(DistrictResult::class, 'snapshot_id');
+    }
 
-	public function election_statistic()
-	{
-		return $this->hasOne(ElectionStatistic::class, 'snapshot_id');
-	}
+    public function statistics()
+    {
+        return $this->hasOne(ElectionStatistic::class, 'snapshot_id');
+    }
 
-	public function party_results()
-	{
-		return $this->hasMany(PartyResult::class, 'snapshot_id');
-	}
+    public function partyResults()
+    {
+        return $this->hasMany(PartyResult::class, 'snapshot_id');
+    }
+
+    public function candidateResults()
+    {
+        return $this->hasMany(
+            CandidateResult::class,
+            'snapshot_id'
+        );
+    }
 }

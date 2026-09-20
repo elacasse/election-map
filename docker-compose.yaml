@@ -4,6 +4,7 @@ x-app-base: &app-base
         dockerfile: Dockerfile
     restart: unless-stopped
     working_dir: /var/www/election-map
+    user: "${UID}:${GID}"
     volumes:
         - .:/var/www/election-map
     environment:
@@ -41,6 +42,11 @@ services:
         ports:
             - '5173:5173'
         command: npm run dev -- --host=0.0.0.0
+
+    scheduler:
+        <<: *app-base
+        container_name: election-map-scheduler
+        command: php artisan schedule:work
 
     database:
         image: mariadb:lts

@@ -1,5 +1,11 @@
 FROM php:8.5-cli
 
+ARG UID=1000
+ARG GID=1000
+
+RUN groupadd -g ${GID} appuser \
+    && useradd -m -u ${UID} -g ${GID} -s /bin/bash appuser
+
 RUN printf '%s\n' \
     'export TERM=xterm-256color' \
     'if command -v dircolors >/dev/null 2>&1; then eval "$(dircolors -b)"; fi' \
