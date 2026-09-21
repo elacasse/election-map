@@ -191,12 +191,10 @@ class ElectionResultsImporter
                 $hash,
                 $lastSnapshot
             ) {
-                if ($lastSnapshot === null) {
-                    $this->storeReferenceData(
-                        $election,
-                        $results
-                    );
-                }
+                $this->storeReferenceData(
+                    $election,
+                    $results
+                );
 
                 $references = $this->loadReferenceData(
                     $election
@@ -279,9 +277,11 @@ class ElectionResultsImporter
      */
     private function storeReferenceData(Election $election, array $results): void
     {
+        $candidateCounts = $this->getCandidateCountsByParty($results);
         $parties = collect();
 
         foreach ($results['statistiques']['partisPolitiques'] ?? [] as $partyData) {
+            $partyNumber = (int) $partyData['numeroPartiPolitique'];
             /** @var ElectionParty|null $party */
             $party = ElectionParty::query()->firstOrCreate(
                 [
@@ -291,7 +291,7 @@ class ElectionResultsImporter
                 [
                     'name'            => $partyData['nomPartiPolitique'],
                     'abbreviation'    => $partyData['abreviationPartiPolitique'],
-                    'candidate_count' => $partyData['nbCandidat'],
+                    'candidate_count' => $candidateCounts[$partyNumber] ?? 0,
                 ]
             );
 
@@ -393,7 +393,7 @@ class ElectionResultsImporter
             'rejected_vote_count'                     => $statistics['nbVoteRejete'],
             'cast_vote_count'                         => $statistics['nbVoteExerce'],
             'registered_voter_count'                  => $statistics['nbElecteurInscrit'],
-            'participation_rate'                      => $statistics['tauxParticipationTotal'],
+            'participation_rate'                      => $this->parseNullableNumber($statistics['tauxParticipationTotal'] ?? null),
             'electoral_district_count'                => $statistics['nbCirconscription'],
             'electoral_district_with_result_count'    => $statistics['nbCirconscriptionAvecResultat'],
             'electoral_district_without_result_count' => $statistics['nbCirconscriptionSansResultat'],
@@ -463,7 +463,7 @@ class ElectionResultsImporter
                 'registered_voter_count'          => $districtData['nbElecteurInscrit'],
                 'valid_vote_rate'                 => $districtData['tauxVoteValide'],
                 'rejected_vote_rate'              => $districtData['tauxVoteRejete'],
-                'participation_rate'              => $districtData['tauxParticipation'],
+                'participation_rate'              => $this->parseNullableNumber($districtData['tauxParticipation'] ?? null),
                 'results_final'                   => (bool) $districtData['isResultatsFinaux'],
                 'source_updated_at'               => $this->parseNullableSourceDate($districtData['iso8601DateMAJ'] ?? null),
             ]);
@@ -596,13 +596,29 @@ class ElectionResultsImporter
             return '0';
         }
 
-        if (!is_numeric($value)) {
-            throw new RuntimeException('Unexpected non-numeric election result value.');
+        if ($value === 'n.d.') {
+            return '0';
+        } else if (!is_numeric($value)) {
+            throw new RuntimeException("Unexpected non-numeric election result value. [$value]");
         }
 
         $normalized = rtrim(rtrim(sprintf('%.10F', (float) $value), '0'), '.');
 
         return $normalized === '-0' ? '0' : $normalized;
+    }
+
+    private function parseNullableNumber(
+        int|float|string|null $value
+    ): ?float {
+        if ($value === null || $value === '' || $value === 'n.d.') {
+            return null;
+        }
+
+        if (! is_numeric($value)) {
+            throw new RuntimeException("Unexpected non-numeric election result value. [$value]");
+        }
+
+        return (float) $value;
     }
 
     private function parseNullableSourceDate(?string $date): ?Carbon
@@ -641,5 +657,20 @@ class ElectionResultsImporter
         if (! Storage::disk('local')->put($filename, $contents)) {
             throw new RuntimeException("Unable to archive downloaded election results to $filename.");
         }
+    }
+
+    private function getCandidateCountsByParty(array $data): array
+    {
+        $counts = [];
+
+        foreach ($data['circonscriptions'] as $district) {
+            foreach ($district['candidats'] as $candidate) {
+                $partyNumber = (int) $candidate['numeroPartiPolitique'];
+
+                $counts[$partyNumber] = ($counts[$partyNumber] ?? 0) + 1;
+            }
+        }
+
+        return $counts;
     }
 }

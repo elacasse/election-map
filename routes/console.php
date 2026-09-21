@@ -12,5 +12,6 @@ $year = config('elections.results_year');
 
 Schedule::command("app:poll-election-results {$year}")
         ->everyMinute()
+        // ->everyFiveSeconds()
         ->withoutOverlapping()
         ->appendOutputTo(storage_path('logs/election-results.log'));

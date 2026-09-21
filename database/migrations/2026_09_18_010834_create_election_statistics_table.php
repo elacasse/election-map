@@ -33,7 +33,7 @@ return new class extends Migration
             $table->unsignedInteger('cast_vote_count');
             $table->unsignedInteger('registered_voter_count');
 
-            $table->decimal('participation_rate', 7, 4);
+            $table->decimal('participation_rate', 7, 4)->nullable();
 
             $table->unsignedSmallInteger('electoral_district_count');
 

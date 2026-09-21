@@ -37,7 +37,7 @@ return new class extends Migration
 
             $table->decimal('valid_vote_rate', 7, 4);
             $table->decimal('rejected_vote_rate', 7, 4);
-            $table->decimal('participation_rate', 7, 4);
+            $table->decimal('participation_rate', 7, 4)->nullable();
 
             $table->boolean('results_final')->default(false);
 
