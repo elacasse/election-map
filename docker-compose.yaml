@@ -52,6 +52,8 @@ services:
         image: mariadb:lts
         container_name: election-map-db
         restart: unless-stopped
+        ports:
+            - '127.0.0.1:3307:3306'
         environment:
             MARIADB_DATABASE: election_map
             MARIADB_USER: election_map

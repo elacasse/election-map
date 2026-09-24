@@ -174,7 +174,7 @@ function afficherCarte(
         style: () => ({
           color: '#333',
           weight: 1,
-          fillColor: '#3388ff',
+          fillColor: '#808080',
           fillOpacity: 0.25,
         }),
 
@@ -192,6 +192,7 @@ function afficherCarte(
 
               target.setStyle({
                 weight: 2,
+                fillColor: '#444444',
                 fillOpacity: 0.5,
               })
             },
@@ -217,6 +218,7 @@ function afficherCarte(
               // Même style que le survol
               selectedLayer.setStyle({
                 weight: 2,
+                fillColor: '#444444',
                 fillOpacity: 0.5,
               })
 
