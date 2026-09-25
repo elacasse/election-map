@@ -29,16 +29,14 @@ use Illuminate\Database\Eloquent\Model;
 class ElectoralDistrict extends Model
 {
     protected $table = 'electoral_districts';
-
     protected $casts = [
-        'election_id' => 'int',
-        'source_district_number' => 'int'
+        'election_id'            => 'int',
+        'source_district_number' => 'int',
     ];
-
     protected $fillable = [
         'election_id',
         'source_district_number',
-        'name'
+        'name',
     ];
 
     public function election()

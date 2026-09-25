@@ -37,11 +37,10 @@ class ElectionParty extends Model
     protected $table = 'election_parties';
 
     protected $casts = [
-        'election_id' => 'int',
+        'election_id'         => 'int',
         'source_party_number' => 'int',
-        'candidate_count' => 'integer',
+        'candidate_count'     => 'integer',
     ];
-
     protected $fillable = [
         'election_id',
         'source_party_number',

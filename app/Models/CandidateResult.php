@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CandidateResult extends Model
 {
-    public $timestamps = false;
-
+    public $timestamps  = false;
     protected $fillable = [
         'snapshot_id',
         'candidate_id',
@@ -16,13 +15,12 @@ class CandidateResult extends Model
         'vote_rate',
         'advance_vote_count',
     ];
-
     protected $casts = [
-        'snapshot_id' => 'integer',
+        'snapshot_id'  => 'integer',
         'candidate_id' => 'integer',
 
-        'vote_count' => 'integer',
-        'vote_rate' => 'decimal:4',
+        'vote_count'         => 'integer',
+        'vote_rate'          => 'decimal:4',
         'advance_vote_count' => 'integer',
     ];
 

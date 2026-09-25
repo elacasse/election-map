@@ -10,13 +10,10 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::table('election_parties', function (Blueprint $table) {
-            $table->unsignedSmallInteger('candidate_count')
-                ->default(0);
-        });
-
         Schema::table('party_results', function (Blueprint $table) {
-            $table->dropColumn('candidate_count');
+            $table->unsignedSmallInteger('won_district_count')
+                ->default(0)
+                ->after('leading_district_count');
         });
     }
 
@@ -26,12 +23,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('party_results', function (Blueprint $table) {
-            $table->unsignedSmallInteger('candidate_count')
-                ->default(0);
-        });
-
-        Schema::table('election_parties', function (Blueprint $table) {
-            $table->dropColumn('candidate_count');
+            $table->dropColumn('leading_district_count');
         });
     }
 };

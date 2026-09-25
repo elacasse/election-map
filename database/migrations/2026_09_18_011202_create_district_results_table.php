@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,12 +14,12 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('snapshot_id')
-                  ->constrained('election_snapshots')
-                  ->cascadeOnDelete();
+                ->constrained('election_snapshots')
+                ->cascadeOnDelete();
 
             $table->foreignId('electoral_district_id')
-                  ->constrained('electoral_districts')
-                  ->cascadeOnDelete();
+                ->constrained('electoral_districts')
+                ->cascadeOnDelete();
 
             $table->unsignedSmallInteger(
                 'polling_station_completed_count'

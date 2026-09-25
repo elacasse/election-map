@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            ElectionSeeder::class
+            ElectionSeeder::class,
         ]);
     }
 }

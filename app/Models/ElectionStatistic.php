@@ -31,27 +31,25 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ElectionStatistic extends Model
 {
-    protected $table = 'election_statistics';
+    protected $table      = 'election_statistics';
     protected $primaryKey = 'snapshot_id';
-    public $incrementing = false;
-    public $timestamps = false;
-
-    protected $casts = [
-        'snapshot_id' => 'int',
-        'polling_station_count' => 'int',
-        'polling_station_completed_count' => 'int',
-        'polling_station_completed_rate' => 'decimal:4',
-        'valid_vote_count' => 'int',
-        'rejected_vote_count' => 'int',
-        'cast_vote_count' => 'int',
-        'registered_voter_count' => 'int',
-        'participation_rate' => 'decimal:4',
-        'electoral_district_count' => 'int',
-        'electoral_district_with_result_count' => 'int',
+    public $incrementing  = false;
+    public $timestamps    = false;
+    protected $casts      = [
+        'snapshot_id'                             => 'int',
+        'polling_station_count'                   => 'int',
+        'polling_station_completed_count'         => 'int',
+        'polling_station_completed_rate'          => 'decimal:4',
+        'valid_vote_count'                        => 'int',
+        'rejected_vote_count'                     => 'int',
+        'cast_vote_count'                         => 'int',
+        'registered_voter_count'                  => 'int',
+        'participation_rate'                      => 'decimal:4',
+        'electoral_district_count'                => 'int',
+        'electoral_district_with_result_count'    => 'int',
         'electoral_district_without_result_count' => 'int',
-        'electoral_district_without_result_rate' => 'decimal:4'
+        'electoral_district_without_result_rate'  => 'decimal:4',
     ];
-
     protected $fillable = [
         'snapshot_id',
         'polling_station_count',
@@ -65,7 +63,7 @@ class ElectionStatistic extends Model
         'electoral_district_count',
         'electoral_district_with_result_count',
         'electoral_district_without_result_count',
-        'electoral_district_without_result_rate'
+        'electoral_district_without_result_rate',
     ];
 
     public function snapshot()

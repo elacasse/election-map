@@ -24,16 +24,16 @@ Route::get('/test/resultats2022.json', function (Request $request) {
 
 // Public website
 Route::inertia('/', 'Public/Home')
-     ->name('home');
+    ->name('home');
 
 // Admin website
 Route::prefix('admin')
-     ->name('admin.')
-     ->middleware(['auth', 'verified'])
-     ->group(function () {
-         Route::inertia('dashboard', 'Admin/Dashboard')
-              ->name('dashboard');
-     });
+    ->name('admin.')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::inertia('dashboard', 'Admin/Dashboard')
+            ->name('dashboard');
+    });
 
 
 require __DIR__ . '/settings.php';

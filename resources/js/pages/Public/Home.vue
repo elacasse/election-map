@@ -29,7 +29,28 @@ type CarteElectorale = FeatureCollection<
     CirconscriptionProperties
 >
 
-// const router = useRouter()
+interface PartyStanding {
+  name: string
+  abbreviation: string
+  color: string | null
+  won_district_count: number
+  leading_district_count: number
+}
+
+interface ElectionSummary {
+  election: {
+    year: number
+    captured_at: string | null
+    results_final: boolean
+  }
+  parties: PartyStanding[]
+}
+
+const partyStandings = ref<PartyStanding[]>([])
+const resultsLoading = ref(false)
+const resultsError = ref<string | null>(null)
+
+let resultsAbortController: AbortController | null = null
 
 const mapElement = ref<HTMLElement | null>(null)
 
@@ -141,6 +162,65 @@ function creerMasque(
   masqueLayer.addTo(map)
 }
 
+function partyColor(color: string | null): string {
+  if (!color) {
+    return '#444444'
+  }
+
+  return color.startsWith('#')
+      ? color
+      : `#${color}`
+}
+
+async function chargerResultats(
+    annee: 2022 | 2026,
+): Promise<void> {
+  resultsAbortController?.abort()
+
+  const controller = new AbortController()
+
+  resultsAbortController = controller
+  resultsLoading.value = true
+  resultsError.value = null
+
+  try {
+    const response = await fetch(
+        `/api/elections/${annee}/results/summary`,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+          signal: controller.signal,
+        },
+    )
+
+    if (!response.ok) {
+      throw new Error(
+          `Unable to load election results: ${response.status}`,
+      )
+    }
+
+    const data = await response.json() as ElectionSummary
+
+    partyStandings.value = data.parties
+  } catch (error) {
+    if (
+        error instanceof DOMException &&
+        error.name === 'AbortError'
+    ) {
+      return
+    }
+
+    partyStandings.value = []
+    resultsError.value =
+        'Impossible de charger les résultats.'
+  } finally {
+    if (resultsAbortController === controller) {
+      resultsLoading.value = false
+    }
+  }
+}
+
 function afficherCarte(
     data: CarteElectorale,
     annee: 2022 | 2026,
@@ -150,6 +230,8 @@ function afficherCarte(
   }
 
   anneeCarte.value = annee
+
+  void chargerResultats(annee)
 
   /*
    * Supprime la carte électorale courante.
@@ -312,6 +394,9 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  resultsAbortController?.abort()
+  resultsAbortController = null
+
   map?.remove()
 
   map = null
@@ -340,6 +425,61 @@ onUnmounted(() => {
         2026
       </button>
     </div>
+
+    <!-- Résultats par parti -->
+    <section
+        class="party-standings"
+        aria-label="Résultats des partis"
+    >
+      <div class="party-standings-header">
+        <span>Parti</span>
+
+        <span>
+      Gagnées / En avance
+    </span>
+      </div>
+
+      <div
+          v-if="resultsLoading"
+          class="party-standings-message"
+      >
+        Chargement...
+      </div>
+
+      <div
+          v-else-if="resultsError"
+          class="party-standings-message"
+      >
+        {{ resultsError }}
+      </div>
+
+      <template v-else>
+        <div
+            v-for="party in partyStandings"
+            :key="party.abbreviation"
+            class="party-standing"
+            :style="{
+          backgroundColor: partyColor(party.color),
+        }"
+        >
+          <div class="party-name">
+            {{ party.name }}
+          </div>
+
+          <div class="party-seats">
+            <strong>
+              {{ party.won_district_count }}
+            </strong>
+
+            <span>/</span>
+
+            <strong>
+              {{ party.leading_district_count }}
+            </strong>
+          </div>
+        </div>
+      </template>
+    </section>
 
     <!-- Raccourcis géographiques -->
     <div class="city-links">
@@ -409,6 +549,84 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+
+/*
+ * Résultats des partis.
+ */
+.party-standings {
+  position: absolute;
+  top: 72px;
+  right: 20px;
+  z-index: 1000;
+
+  width: 360px;
+
+  overflow: hidden;
+
+  border: 1px solid #666666;
+  border-radius: 6px;
+
+  background: #222222;
+}
+
+.party-standings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 8px 12px;
+
+  font-size: 0.75rem;
+  font-weight: bold;
+
+  background: #222222;
+}
+
+.party-standings-message {
+  padding: 16px 12px;
+
+  text-align: center;
+
+  background: #333333;
+}
+
+.party-standing {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  min-height: 52px;
+  padding: 8px 12px;
+
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+}
+
+.party-name {
+  min-width: 0;
+
+  overflow: hidden;
+
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.party-seats {
+  display: flex;
+  flex-shrink: 0;
+  align-items: baseline;
+  gap: 5px;
+
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.party-seats span {
+  opacity: 0.75;
+}
 
 .map-page {
   position: relative;

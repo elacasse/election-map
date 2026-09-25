@@ -9,7 +9,7 @@ test('security page is displayed', function () {
     $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
 
     Features::twoFactorAuthentication([
-        'confirm' => true,
+        'confirm'         => true,
         'confirmPassword' => true,
     ]);
     Features::passkeys([
@@ -26,7 +26,7 @@ test('security page is displayed', function () {
             ->where('canManagePasskeys', true)
             ->where('passkeys', [])
             ->where('canManageTwoFactor', true)
-            ->where('twoFactorEnabled', false),);
+            ->where('twoFactorEnabled', false), );
 });
 
 test('security page requires password confirmation when enabled', function () {
@@ -35,7 +35,7 @@ test('security page requires password confirmation when enabled', function () {
     $user = User::factory()->create();
 
     Features::twoFactorAuthentication([
-        'confirm' => true,
+        'confirm'         => true,
         'confirmPassword' => true,
     ]);
 
@@ -62,7 +62,7 @@ test('security page renders without two factor when feature is disabled', functi
             ->where('passkeys', [])
             ->where('canManageTwoFactor', false)
             ->missing('twoFactorEnabled')
-            ->missing('requiresConfirmation'),);
+            ->missing('requiresConfirmation'), );
 });
 
 test('password can be updated', function () {
@@ -72,8 +72,8 @@ test('password can be updated', function () {
         ->actingAs($user)
         ->from(route('security.edit'))
         ->put(route('user-password.update'), [
-            'current_password' => 'password',
-            'password' => 'new-password',
+            'current_password'      => 'password',
+            'password'              => 'new-password',
             'password_confirmation' => 'new-password',
         ]);
 
@@ -91,8 +91,8 @@ test('correct password must be provided to update password', function () {
         ->actingAs($user)
         ->from(route('security.edit'))
         ->put(route('user-password.update'), [
-            'current_password' => 'wrong-password',
-            'password' => 'new-password',
+            'current_password'      => 'wrong-password',
+            'password'              => 'new-password',
             'password_confirmation' => 'new-password',
         ]);
 

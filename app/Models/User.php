@@ -32,18 +32,15 @@ use Illuminate\Database\Eloquent\Model;
 class User extends Model
 {
     protected $table = 'users';
-
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'two_factor_confirmed_at' => 'datetime'
+        'email_verified_at'       => 'datetime',
+        'two_factor_confirmed_at' => 'datetime',
     ];
-
     protected $hidden = [
         'password',
         'two_factor_secret',
-        'remember_token'
+        'remember_token',
     ];
-
     protected $fillable = [
         'name',
         'email',
@@ -52,7 +49,7 @@ class User extends Model
         'two_factor_secret',
         'two_factor_recovery_codes',
         'two_factor_confirmed_at',
-        'remember_token'
+        'remember_token',
     ];
 
     public function passkeys()

@@ -23,8 +23,8 @@ class ElectionResultsSummaryController extends Controller
         if ($snapshot === null) {
             return response()->json([
                 'election' => [
-                    'year' => $election->year,
-                    'captured_at' => null,
+                    'year'          => $election->year,
+                    'captured_at'   => null,
                     'results_final' => false,
                 ],
                 'parties' => [],
@@ -33,17 +33,19 @@ class ElectionResultsSummaryController extends Controller
 
         return response()->json([
             'election' => [
-                'year' => $election->year,
-                'captured_at' => $snapshot->captured_at,
+                'year'          => $election->year,
+                'captured_at'   => $snapshot->captured_at,
                 'results_final' => $snapshot->results_final,
             ],
 
             'parties' => $snapshot->partyResults->map(
                 fn ($result) => [
-                    'name' => $result->party->name,
+                    'name'         => $result->party->name,
                     'abbreviation' => $result->party->abbreviation,
-                    'color' => $result->party->color,
-                    'won_district_count' => $result->won_district_count,
+                    'color'        => $result->party->color
+                        ? "#{$result->party->color}"
+                        : null,
+                    'won_district_count'     => $result->won_district_count,
                     'leading_district_count' => $result->leading_district_count,
                 ]
             )->values(),

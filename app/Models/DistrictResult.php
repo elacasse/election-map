@@ -34,25 +34,23 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DistrictResult extends Model
 {
-    protected $table = 'district_results';
+    protected $table   = 'district_results';
     public $timestamps = false;
-
-    protected $casts = [
-        'snapshot_id' => 'int',
-        'electoral_district_id' => 'int',
+    protected $casts   = [
+        'snapshot_id'                     => 'int',
+        'electoral_district_id'           => 'int',
         'polling_station_completed_count' => 'int',
-        'polling_station_count' => 'int',
-        'valid_vote_count' => 'int',
-        'rejected_vote_count' => 'int',
-        'cast_vote_count' => 'int',
-        'registered_voter_count' => 'int',
-        'valid_vote_rate' => 'decimal:4',
-        'rejected_vote_rate' => 'decimal:4',
-        'participation_rate' => 'decimal:4',
-        'results_final' => 'bool',
-        'source_updated_at' => 'datetime'
+        'polling_station_count'           => 'int',
+        'valid_vote_count'                => 'int',
+        'rejected_vote_count'             => 'int',
+        'cast_vote_count'                 => 'int',
+        'registered_voter_count'          => 'int',
+        'valid_vote_rate'                 => 'decimal:4',
+        'rejected_vote_rate'              => 'decimal:4',
+        'participation_rate'              => 'decimal:4',
+        'results_final'                   => 'bool',
+        'source_updated_at'               => 'datetime',
     ];
-
     protected $fillable = [
         'snapshot_id',
         'electoral_district_id',
@@ -66,7 +64,7 @@ class DistrictResult extends Model
         'rejected_vote_rate',
         'participation_rate',
         'results_final',
-        'source_updated_at'
+        'source_updated_at',
     ];
 
     public function electoralDistrict()

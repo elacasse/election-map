@@ -26,18 +26,16 @@ use Illuminate\Database\Eloquent\Model;
  */
 class JobBatch extends Model
 {
-    protected $table = 'job_batches';
+    protected $table     = 'job_batches';
     public $incrementing = false;
-    public $timestamps = false;
-
-    protected $casts = [
-        'total_jobs' => 'int',
+    public $timestamps   = false;
+    protected $casts     = [
+        'total_jobs'   => 'int',
         'pending_jobs' => 'int',
-        'failed_jobs' => 'int',
+        'failed_jobs'  => 'int',
         'cancelled_at' => 'int',
-        'finished_at' => 'int'
+        'finished_at'  => 'int',
     ];
-
     protected $fillable = [
         'name',
         'total_jobs',
@@ -46,6 +44,6 @@ class JobBatch extends Model
         'failed_job_ids',
         'options',
         'cancelled_at',
-        'finished_at'
+        'finished_at',
     ];
 }

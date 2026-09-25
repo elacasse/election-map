@@ -31,21 +31,19 @@ use Illuminate\Database\Eloquent\Model;
 class Candidate extends Model
 {
     protected $table = 'candidates';
-
     protected $casts = [
         'election_id'             => 'int',
         'electoral_district_id'   => 'int',
         'election_party_id'       => 'int',
-        'source_candidate_number' => 'int'
+        'source_candidate_number' => 'int',
     ];
-
     protected $fillable = [
         'election_id',
         'electoral_district_id',
         'election_party_id',
         'source_candidate_number',
         'last_name',
-        'first_name'
+        'first_name',
     ];
 
     public function election()

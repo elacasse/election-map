@@ -11,7 +11,7 @@ Artisan::command('inspire', function () {
 $year = config('elections.results_year');
 
 Schedule::command("app:poll-election-results {$year}")
-        ->everyMinute()
+    ->everyMinute()
         // ->everyFiveSeconds()
-        ->withoutOverlapping()
-        ->appendOutputTo(storage_path('logs/election-results.log'));
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/election-results.log'));

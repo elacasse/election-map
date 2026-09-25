@@ -19,17 +19,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CacheLock extends Model
 {
-    protected $table = 'cache_locks';
+    protected $table      = 'cache_locks';
     protected $primaryKey = 'key';
-    public $incrementing = false;
-    public $timestamps = false;
-
-    protected $casts = [
-        'expiration' => 'int'
+    public $incrementing  = false;
+    public $timestamps    = false;
+    protected $casts      = [
+        'expiration' => 'int',
     ];
-
     protected $fillable = [
         'owner',
-        'expiration'
+        'expiration',
     ];
 }

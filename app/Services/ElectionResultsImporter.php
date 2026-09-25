@@ -12,7 +12,10 @@ use App\Models\ElectionStatistic;
 use App\Models\ElectoralDistrict;
 use App\Models\PartyResult;
 use Carbon\Carbon;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -23,9 +26,9 @@ use RuntimeException;
 class ElectionResultsImporter
 {
     /**
-     * @throws \Illuminate\Http\Client\ConnectionException
-     * @throws \Illuminate\Http\Client\RequestException
-     * @throws JsonException|\Illuminate\Contracts\Cache\LockTimeoutException
+     * @throws ConnectionException
+     * @throws RequestException
+     * @throws JsonException|LockTimeoutException
      */
     public function import(Election $election): ?ElectionSnapshot
     {
@@ -38,8 +41,8 @@ class ElectionResultsImporter
     }
 
     /**
-     * @throws \Illuminate\Http\Client\ConnectionException
-     * @throws \Illuminate\Http\Client\RequestException
+     * @throws ConnectionException
+     * @throws RequestException
      * @throws JsonException
      */
     private function performImport(Election $election): ?ElectionSnapshot
@@ -53,9 +56,9 @@ class ElectionResultsImporter
         }
 
         $lastSnapshot = ElectionSnapshot::query()
-                                        ->where('election_id', $election->id)
-                                        ->latest('id')
-                                        ->first();
+            ->where('election_id', $election->id)
+            ->latest('id')
+            ->first();
 
         /*
          * Les validateurs HTTP sont conservés dans le cache.
@@ -96,9 +99,9 @@ class ElectionResultsImporter
         }
 
         $response = Http::withHeaders($headers)
-                        ->timeout(30)
-                        ->retry(2, 500)
-                        ->get($url);
+            ->timeout(30)
+            ->retry(2, 500)
+            ->get($url);
 
         /*
          * 304 = le document source n'a pas changé.
@@ -188,8 +191,7 @@ class ElectionResultsImporter
                 $results,
                 $etag,
                 $lastModified,
-                $hash,
-                $lastSnapshot
+                $hash
             ) {
                 $this->storeReferenceData(
                     $election,
@@ -215,10 +217,15 @@ class ElectionResultsImporter
                     $results['statistiques']
                 );
 
+                $wonDistrictCounts = $this->getWonDistrictCountsByParty(
+                    $results['circonscriptions']
+                );
+
                 $this->storePartyResults(
                     $snapshot,
                     $results['statistiques']['partisPolitiques'] ?? [],
-                    $references['parties']
+                    $references['parties'],
+                    $wonDistrictCounts
                 );
 
                 $this->storeDistrictResults(
@@ -278,7 +285,7 @@ class ElectionResultsImporter
     private function storeReferenceData(Election $election, array $results): void
     {
         $candidateCounts = $this->getCandidateCountsByParty($results);
-        $parties = collect();
+        $parties         = collect();
 
         foreach ($results['statistiques']['partisPolitiques'] ?? [] as $partyData) {
             $partyNumber = (int) $partyData['numeroPartiPolitique'];
@@ -328,8 +335,8 @@ class ElectionResultsImporter
                 ) {
                     throw new RuntimeException(
                         "Unknown party {$partyNumber} "
-                        . "for candidate "
-                        . $candidateData['numeroCandidat'] . '.'
+                        .'for candidate '
+                        .$candidateData['numeroCandidat'].'.'
                     );
                 }
 
@@ -364,19 +371,19 @@ class ElectionResultsImporter
     ): array {
         return [
             'parties' => ElectionParty::query()
-                                      ->where('election_id', $election->id)
-                                      ->get()
-                                      ->keyBy('source_party_number'),
+                ->where('election_id', $election->id)
+                ->get()
+                ->keyBy('source_party_number'),
 
             'districts' => ElectoralDistrict::query()
-                                            ->where('election_id', $election->id)
-                                            ->get()
-                                            ->keyBy('source_district_number'),
+                ->where('election_id', $election->id)
+                ->get()
+                ->keyBy('source_district_number'),
 
             'candidates' => Candidate::query()
-                                     ->where('election_id', $election->id)
-                                     ->get()
-                                     ->keyBy('source_candidate_number'),
+                ->where('election_id', $election->id)
+                ->get()
+                ->keyBy('source_candidate_number'),
         ];
     }
 
@@ -407,7 +414,8 @@ class ElectionResultsImporter
     private function storePartyResults(
         ElectionSnapshot $snapshot,
         array $partyResults,
-        Collection $parties
+        Collection $parties,
+        array $wonDistrictCounts,
     ): void {
         foreach ($partyResults as $partyData) {
             $partyNumber = (int) $partyData['numeroPartiPolitique'];
@@ -425,6 +433,7 @@ class ElectionResultsImporter
                 'vote_count'             => $partyData['nbVoteTotal'],
                 'vote_rate'              => $partyData['tauxVoteTotal'],
                 'leading_district_count' => $partyData['nbCirconscriptionsEnAvance'],
+                'won_district_count'     => $wonDistrictCounts[$partyNumber] ?? 0,
                 'leading_district_rate'  => $partyData['tauxCirconscriptionsEnAvance'],
             ]);
         }
@@ -598,11 +607,13 @@ class ElectionResultsImporter
 
         if ($value === 'n.d.') {
             return '0';
-        } else if (!is_numeric($value)) {
+        } elseif (!is_numeric($value)) {
             throw new RuntimeException("Unexpected non-numeric election result value. [$value]");
         }
 
-        $normalized = rtrim(rtrim(sprintf('%.10F', (float) $value), '0'), '.');
+        $normalized = sprintf('%.10F', (float) $value)
+                |> (fn ($x) => rtrim($x, '0'))
+                |> (fn ($x) => rtrim($x, '.'));
 
         return $normalized === '-0' ? '0' : $normalized;
     }
@@ -614,7 +625,7 @@ class ElectionResultsImporter
             return null;
         }
 
-        if (! is_numeric($value)) {
+        if (!is_numeric($value)) {
             throw new RuntimeException("Unexpected non-numeric election result value. [$value]");
         }
 
@@ -654,7 +665,7 @@ class ElectionResultsImporter
             now()->format('Y-m-d_H-i-s')
         );
 
-        if (! Storage::disk('local')->put($filename, $contents)) {
+        if (!Storage::disk('local')->put($filename, $contents)) {
             throw new RuntimeException("Unable to archive downloaded election results to $filename.");
         }
     }
@@ -669,6 +680,34 @@ class ElectionResultsImporter
 
                 $counts[$partyNumber] = ($counts[$partyNumber] ?? 0) + 1;
             }
+        }
+
+        return $counts;
+    }
+
+    private function getWonDistrictCountsByParty(array $districts): array
+    {
+        $counts = [];
+
+        foreach ($districts as $district) {
+            if (!($district['isResultatsFinaux'] ?? false)) {
+                continue;
+            }
+
+            $candidates = $district['candidats'] ?? [];
+
+            if ($candidates === []) {
+                continue;
+            }
+
+            usort(
+                $candidates,
+                fn (array $a, array $b) => ((int) $b['nbVoteTotal']) <=> ((int) $a['nbVoteTotal'])
+            );
+
+            $partyNumber = (int) $candidates[0]['numeroPartiPolitique'];
+
+            $counts[$partyNumber] = ($counts[$partyNumber] ?? 0) + 1;
         }
 
         return $counts;

@@ -20,8 +20,8 @@ class StartElectionResults extends Command
         $year = (int) $this->argument('year');
 
         $election = Election::query()
-                            ->where('year', $year)
-                            ->first();
+            ->where('year', $year)
+            ->first();
 
         if ($election === null) {
             $this->error("Election $year not found.");

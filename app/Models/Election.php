@@ -32,13 +32,11 @@ class Election extends Model
     use HasFactory;
 
     protected $table = 'elections';
-
     protected $casts = [
-        'year' => 'int'
+        'year' => 'int',
     ];
-
     protected $fillable = [
-        'year'
+        'year',
     ];
 
     public function candidates()
@@ -64,6 +62,6 @@ class Election extends Model
     public function latestSnapshot(): HasOne
     {
         return $this->hasOne(ElectionSnapshot::class)
-                    ->latestOfMany();
+            ->latestOfMany();
     }
 }

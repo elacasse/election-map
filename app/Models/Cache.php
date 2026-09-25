@@ -19,17 +19,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Cache extends Model
 {
-    protected $table = 'cache';
+    protected $table      = 'cache';
     protected $primaryKey = 'key';
-    public $incrementing = false;
-    public $timestamps = false;
-
-    protected $casts = [
-        'expiration' => 'int'
+    public $incrementing  = false;
+    public $timestamps    = false;
+    protected $casts      = [
+        'expiration' => 'int',
     ];
-
     protected $fillable = [
         'value',
-        'expiration'
+        'expiration',
     ];
 }

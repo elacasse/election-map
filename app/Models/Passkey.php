@@ -28,18 +28,16 @@ use Illuminate\Database\Eloquent\Model;
 class Passkey extends Model
 {
     protected $table = 'passkeys';
-
     protected $casts = [
-        'user_id' => 'int',
-        'last_used_at' => 'datetime'
+        'user_id'      => 'int',
+        'last_used_at' => 'datetime',
     ];
-
     protected $fillable = [
         'user_id',
         'name',
         'credential_id',
         'credential',
-        'last_used_at'
+        'last_used_at',
     ];
 
     public function user()

@@ -34,15 +34,13 @@ use Illuminate\Database\Eloquent\Model;
 class ElectionSnapshot extends Model
 {
     protected $table = 'election_snapshots';
-
     protected $casts = [
-        'election_id' => 'int',
-        'captured_at' => 'datetime',
+        'election_id'             => 'int',
+        'captured_at'             => 'datetime',
         'source_last_modified_at' => 'datetime',
-        'source_updated_at' => 'datetime',
-        'results_final' => 'bool'
+        'source_updated_at'       => 'datetime',
+        'results_final'           => 'bool',
     ];
-
     protected $fillable = [
         'election_id',
         'captured_at',
@@ -50,7 +48,7 @@ class ElectionSnapshot extends Model
         'source_last_modified_at',
         'source_updated_at',
         'results_hash',
-        'results_final'
+        'results_final',
     ];
 
     public function election()
