@@ -102,15 +102,15 @@ class ElectionResultsSummaryController extends Controller
                     'source_district_number' => (int) $first->source_district_number,
 
                     'party_color' => $isTied
-                            ? null
-                            : $first->party_color,
+                        ? null
+                        : $first->party_color,
 
                     'results_final' => (bool) $first->results_final,
                 ];
             })
             ->values();
 
-        $partyResults = $snapshot->partyResults
+        $sortedPartyResults = $snapshot->partyResults
             ->sortBy(function ($result): array {
                 $priorityPartyNumbers = [
                     8,  // Parti québécois
@@ -150,7 +150,17 @@ class ElectionResultsSummaryController extends Controller
                     $result->party->name,
                 ];
             })
-            ->take(5)
+            ->values();
+
+        $partyWithDistrictCount = $sortedPartyResults
+            ->filter(
+                fn ($result): bool => $result->won_district_count > 0 ||
+                    $result->leading_district_count > 0
+            )
+            ->count();
+
+        $partyResults = $sortedPartyResults
+            ->take(max(5, $partyWithDistrictCount))
             ->values();
 
         return response()->json([
