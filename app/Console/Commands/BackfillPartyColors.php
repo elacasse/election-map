@@ -45,6 +45,9 @@ class BackfillPartyColors extends Command
             99331 => '2A9D8F', // Présence Québec
             99341 => '176B87', // PAPE - Équipe Québec debout
             99352 => '527A9E', // Parti populaire du Québec
+
+            99318 => 'B5121B', // Parti communiste du Québec
+            99375 => '3A6EA5', // Osons Québec
         ];
 
         $query = ElectionParty::query()
