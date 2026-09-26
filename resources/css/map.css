@@ -3,9 +3,6 @@
 }
 
 .dark-map-tiles {
-    filter: brightness(0.55)
-    invert(1)
-    contrast(1.2)
-    hue-rotate(180deg)
-    saturate(0.3);
+    filter: brightness(0.55) invert(1) contrast(1.2) hue-rotate(180deg)
+        saturate(0.3);
 }

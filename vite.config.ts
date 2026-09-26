@@ -35,8 +35,8 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 5173,
         hmr: {
-          host: 'localhost',
-          port: 5173,
+            host: 'localhost',
+            port: 5173,
         },
         watch: {
             ignored: [

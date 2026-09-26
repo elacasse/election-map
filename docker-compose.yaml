@@ -4,7 +4,7 @@ x-app-base: &app-base
         dockerfile: Dockerfile
     restart: unless-stopped
     working_dir: /var/www/election-map
-    user: "${UID}:${GID}"
+    user: '${UID}:${GID}'
     volumes:
         - .:/var/www/election-map
     environment:

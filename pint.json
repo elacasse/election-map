@@ -1,27 +1,25 @@
 {
-  "preset": "psr12",
-  "rules": {
-    "method_chaining_indentation": true,
+    "preset": "psr12",
+    "rules": {
+        "method_chaining_indentation": true,
 
-    "binary_operator_spaces": {
-      "operators": {
-        "=": "align_single_space_minimal",
-        "=>": "align_single_space_minimal"
-      }
-    },
+        "binary_operator_spaces": {
+            "operators": {
+                "=": "align_single_space_minimal",
+                "=>": "align_single_space_minimal"
+            }
+        },
 
-    "class_attributes_separation": {
-      "elements": {
-        "property": "none"
-      }
-    },
+        "class_attributes_separation": {
+            "elements": {
+                "property": "none"
+            }
+        },
 
-    "trailing_comma_in_multiline": {
-      "elements": [
-        "arrays"
-      ]
-    },
+        "trailing_comma_in_multiline": {
+            "elements": ["arrays"]
+        },
 
-    "not_operator_with_successor_space": false
-  }
+        "not_operator_with_successor_space": false
+    }
 }

@@ -1,553 +1,553 @@
 {
-  "election": {
-    "year": 2022,
-    "captured_at": "2026-09-21T03:55:18.000000Z",
-    "results_final": true
-  },
-  "parties": [
-    {
-      "name": "Coalition Avenir Qu\u00e9bec",
-      "abbreviation": "CAQ",
-      "color": "#00A7B5",
-      "won_district_count": 79,
-      "leading_district_count": 79
-    },
-    {
-      "name": "Parti Lib\u00e9ral du Qu\u00e9bec",
-      "abbreviation": "PLQ",
-      "color": "#D71920",
-      "won_district_count": 18,
-      "leading_district_count": 18
-    },
-    {
-      "name": "Qu\u00e9bec Solidaire",
-      "abbreviation": "QS",
-      "color": "#F58220",
-      "won_district_count": 11,
-      "leading_district_count": 11
-    },
-    {
-      "name": "Parti Qu\u00e9b\u00e9cois",
-      "abbreviation": "PQ",
-      "color": "#1E295C",
-      "won_district_count": 7,
-      "leading_district_count": 7
-    },
-    {
-      "name": "Parti Conservateur du Qu\u00e9bec",
-      "abbreviation": "PCQ",
-      "color": "#0055A5",
-      "won_district_count": 1,
-      "leading_district_count": 1
-    },
-    {
-      "name": "Députés indépendants",
-      "abbreviation": "Ind.",
-      "color": "#808080",
-      "won_district_count": 9,
-      "leading_district_count": 9
-    }
-  ],
-  "districts": [
-    {
-      "source_district_number": 648,
-      "party_color": "808080"
-    },
-    {
-      "source_district_number": 642,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 338,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 366,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 520,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 144,
-      "party_color": "1E295C"
-    },
-    {
-      "source_district_number": 806,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 802,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 218,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 822,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 566,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 588,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 536,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 850,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 258,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 360,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 204,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 370,
-      "party_color": "1E295C"
-    },
-    {
-      "source_district_number": 238,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 676,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 620,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 748,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 760,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 226,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 754,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 918,
-      "party_color": "1E295C"
-    },
-    {
-      "source_district_number": 460,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 814,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 826,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 320,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 508,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 138,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 914,
-      "party_color": "808080"
-    },
-    {
-      "source_district_number": 902,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 466,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 854,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 614,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 346,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 206,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 502,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 352,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 602,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 216,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 210,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 858,
-      "party_color": "1E295C"
-    },
-    {
-      "source_district_number": 310,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 736,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 364,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 702,
-      "party_color": "1E295C"
-    },
-    {
-      "source_district_number": 126,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 570,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 922,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 594,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 926,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 390,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 720,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 236,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 244,
-      "party_color": "808080"
-    },
-    {
-      "source_district_number": 232,
-      "party_color": "808080"
-    },
-    {
-      "source_district_number": 554,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 344,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 454,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 670,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 530,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 818,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 810,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 708,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 304,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 246,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 306,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 666,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 548,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 842,
-      "party_color": "1E295C"
-    },
-    {
-      "source_district_number": 340,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 104,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 350,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 482,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 514,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 252,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 742,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 336,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 312,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 150,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 324,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 120,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 626,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 380,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 608,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 714,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 582,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 906,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 560,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 264,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 132,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 838,
-      "party_color": "0055A5"
-    },
-    {
-      "source_district_number": 834,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 316,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 930,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 356,
-      "party_color": "808080"
-    },
-    {
-      "source_district_number": 576,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 636,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 110,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 326,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 260,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 212,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 526,
-      "party_color": "808080"
-    },
-    {
-      "source_district_number": 318,
-      "party_color": "808080"
-    },
-    {
-      "source_district_number": 330,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 470,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 230,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 116,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 220,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 250,
-      "party_color": "808080"
-    },
-    {
-      "source_district_number": 730,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 542,
-      "party_color": "1E295C"
-    },
-    {
-      "source_district_number": 660,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 938,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 240,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 726,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 224,
-      "party_color": "808080"
-    },
-    {
-      "source_district_number": 256,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 300,
-      "party_color": "F58220"
-    },
-    {
-      "source_district_number": 358,
-      "party_color": "D71920"
-    },
-    {
-      "source_district_number": 476,
-      "party_color": "00A7B5"
-    },
-    {
-      "source_district_number": 332,
-      "party_color": "D71920"
-    }
-  ]
+    "election": {
+        "year": 2022,
+        "captured_at": "2026-09-21T03:55:18.000000Z",
+        "results_final": true
+    },
+    "parties": [
+        {
+            "name": "Coalition Avenir Qu\u00e9bec",
+            "abbreviation": "CAQ",
+            "color": "#00A7B5",
+            "won_district_count": 79,
+            "leading_district_count": 79
+        },
+        {
+            "name": "Parti Lib\u00e9ral du Qu\u00e9bec",
+            "abbreviation": "PLQ",
+            "color": "#D71920",
+            "won_district_count": 18,
+            "leading_district_count": 18
+        },
+        {
+            "name": "Qu\u00e9bec Solidaire",
+            "abbreviation": "QS",
+            "color": "#F58220",
+            "won_district_count": 11,
+            "leading_district_count": 11
+        },
+        {
+            "name": "Parti Qu\u00e9b\u00e9cois",
+            "abbreviation": "PQ",
+            "color": "#1E295C",
+            "won_district_count": 7,
+            "leading_district_count": 7
+        },
+        {
+            "name": "Parti Conservateur du Qu\u00e9bec",
+            "abbreviation": "PCQ",
+            "color": "#0055A5",
+            "won_district_count": 1,
+            "leading_district_count": 1
+        },
+        {
+            "name": "Députés indépendants",
+            "abbreviation": "Ind.",
+            "color": "#808080",
+            "won_district_count": 9,
+            "leading_district_count": 9
+        }
+    ],
+    "districts": [
+        {
+            "source_district_number": 648,
+            "party_color": "808080"
+        },
+        {
+            "source_district_number": 642,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 338,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 366,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 520,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 144,
+            "party_color": "1E295C"
+        },
+        {
+            "source_district_number": 806,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 802,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 218,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 822,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 566,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 588,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 536,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 850,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 258,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 360,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 204,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 370,
+            "party_color": "1E295C"
+        },
+        {
+            "source_district_number": 238,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 676,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 620,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 748,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 760,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 226,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 754,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 918,
+            "party_color": "1E295C"
+        },
+        {
+            "source_district_number": 460,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 814,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 826,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 320,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 508,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 138,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 914,
+            "party_color": "808080"
+        },
+        {
+            "source_district_number": 902,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 466,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 854,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 614,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 346,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 206,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 502,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 352,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 602,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 216,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 210,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 858,
+            "party_color": "1E295C"
+        },
+        {
+            "source_district_number": 310,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 736,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 364,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 702,
+            "party_color": "1E295C"
+        },
+        {
+            "source_district_number": 126,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 570,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 922,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 594,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 926,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 390,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 720,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 236,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 244,
+            "party_color": "808080"
+        },
+        {
+            "source_district_number": 232,
+            "party_color": "808080"
+        },
+        {
+            "source_district_number": 554,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 344,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 454,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 670,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 530,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 818,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 810,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 708,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 304,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 246,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 306,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 666,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 548,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 842,
+            "party_color": "1E295C"
+        },
+        {
+            "source_district_number": 340,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 104,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 350,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 482,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 514,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 252,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 742,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 336,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 312,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 150,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 324,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 120,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 626,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 380,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 608,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 714,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 582,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 906,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 560,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 264,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 132,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 838,
+            "party_color": "0055A5"
+        },
+        {
+            "source_district_number": 834,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 316,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 930,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 356,
+            "party_color": "808080"
+        },
+        {
+            "source_district_number": 576,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 636,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 110,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 326,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 260,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 212,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 526,
+            "party_color": "808080"
+        },
+        {
+            "source_district_number": 318,
+            "party_color": "808080"
+        },
+        {
+            "source_district_number": 330,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 470,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 230,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 116,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 220,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 250,
+            "party_color": "808080"
+        },
+        {
+            "source_district_number": 730,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 542,
+            "party_color": "1E295C"
+        },
+        {
+            "source_district_number": 660,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 938,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 240,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 726,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 224,
+            "party_color": "808080"
+        },
+        {
+            "source_district_number": 256,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 300,
+            "party_color": "F58220"
+        },
+        {
+            "source_district_number": 358,
+            "party_color": "D71920"
+        },
+        {
+            "source_district_number": 476,
+            "party_color": "00A7B5"
+        },
+        {
+            "source_district_number": 332,
+            "party_color": "D71920"
+        }
+    ]
 }

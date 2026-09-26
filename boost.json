@@ -1,7 +1,5 @@
 {
-    "agents": [
-        "cursor"
-    ],
+    "agents": ["cursor"],
     "cloud": false,
     "guidelines": true,
     "mcp": true,
