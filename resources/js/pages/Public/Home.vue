@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import '../../../css/map.css'
@@ -7,7 +7,6 @@ import '../../../css/map.css'
 import { union } from '@turf/union'
 import { difference } from '@turf/difference'
 import { polygon, featureCollection } from '@turf/helpers'
-//import { Head, Link } from '@inertiajs/vue3';
 
 import type {
   FeatureCollection,
@@ -37,6 +36,12 @@ interface PartyStanding {
   leading_district_count: number
 }
 
+interface DistrictStanding {
+  source_district_number: number
+  party_color: string | null
+  results_final: boolean
+}
+
 interface ElectionSummary {
   election: {
     year: number
@@ -44,20 +49,30 @@ interface ElectionSummary {
     results_final: boolean
   }
   parties: PartyStanding[]
+  districts: DistrictStanding[]
 }
+
+const partyStandingsLabel = computed(() =>
+    modeCarte.value !== 2026
+        ? 'Sièges'
+        : 'Gagnées / En avance'
+)
 
 const partyStandings = ref<PartyStanding[]>([])
 const resultsLoading = ref(false)
 const resultsError = ref<string | null>(null)
 
+const districtStandings =
+    ref<Map<number, DistrictStanding>>(new Map())
+
 let resultsAbortController: AbortController | null = null
 
 const mapElement = ref<HTMLElement | null>(null)
 
-const anneeCarte = ref<2022 | 2026>(2026)
+type MapMode = 2022 | 'dissolution' | 2026
+const modeCarte = ref<MapMode>(2026)
 
 const carte2026 = carte2026Json as CarteElectorale
-
 const carte2022 = carte2022Json as CarteElectorale
 
 let map: L.Map | null = null
@@ -162,14 +177,127 @@ function creerMasque(
   masqueLayer.addTo(map)
 }
 
+function districtColor(
+    districtNumber: number,
+): string {
+  const district =
+      districtStandings.value.get(districtNumber)
+
+  return partyColor(
+      district?.party_color ?? null,
+  )
+}
+
 function partyColor(color: string | null): string {
   if (!color) {
-    return '#444444'
+    return '#808080'
   }
 
   return color.startsWith('#')
       ? color
       : `#${color}`
+}
+
+function appliquerCouleursCirconscriptions(): void {
+  geoJsonLayer?.setStyle(feature => {
+    const properties =
+        feature?.properties as
+            CirconscriptionProperties | undefined
+
+    if (!properties) {
+      return {}
+    }
+
+    return {
+      color: '#333333',
+      weight: 1,
+      fillColor: districtColor(
+          Number(properties.CO_CEP),
+      ),
+      fillOpacity: 0.6,
+    }
+  })
+}
+
+interface AssemblyDissolutionSummary {
+  parties: {
+    name: string
+    abbreviation: string
+    color: string | null
+    won_district_count: number
+    leading_district_count: number
+  }[]
+
+  districts: DistrictStanding[]
+}
+
+async function chargerCompositionDissolution(): Promise<void> {
+  resultsAbortController?.abort()
+
+  const controller = new AbortController()
+
+  resultsAbortController = controller
+  resultsLoading.value = true
+  resultsError.value = null
+
+  try {
+    const response = await fetch(
+        '/api/assembly/dissolution',
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+          signal: controller.signal,
+        },
+    )
+
+    if (!response.ok) {
+      throw new Error(
+          `Unable to load assembly composition: ${response.status}`,
+      )
+    }
+
+    const data =
+        await response.json() as AssemblyDissolutionSummary
+
+    partyStandings.value = data.parties.map(
+        party => ({
+          name: party.name,
+          abbreviation: party.abbreviation,
+          color: party.color,
+          won_district_count: party.won_district_count,
+          leading_district_count: party.leading_district_count,
+        }),
+    )
+
+    districtStandings.value = new Map(
+        data.districts.map(
+            district => [
+              district.source_district_number,
+              district,
+            ],
+        ),
+    )
+
+    appliquerCouleursCirconscriptions()
+  } catch (error) {
+    if (
+        error instanceof DOMException &&
+        error.name === 'AbortError'
+    ) {
+      return
+    }
+
+    partyStandings.value = []
+    districtStandings.value = new Map()
+
+    resultsError.value =
+        'Impossible de charger la composition de l’Assemblée.'
+  } finally {
+    if (resultsAbortController === controller) {
+      resultsLoading.value = false
+    }
+  }
 }
 
 async function chargerResultats(
@@ -203,6 +331,17 @@ async function chargerResultats(
     const data = await response.json() as ElectionSummary
 
     partyStandings.value = data.parties
+
+    districtStandings.value = new Map(
+        data.districts.map(
+            district => [
+              district.source_district_number,
+              district,
+            ],
+        ),
+    )
+
+    appliquerCouleursCirconscriptions()
   } catch (error) {
     if (
         error instanceof DOMException &&
@@ -223,15 +362,23 @@ async function chargerResultats(
 
 function afficherCarte(
     data: CarteElectorale,
-    annee: 2022 | 2026,
+    mode: MapMode,
 ) {
+  modeCarte.value = mode
+
   if (!map) {
     return
   }
 
-  anneeCarte.value = annee
+  let annee: 2022 | 2026
 
-  void chargerResultats(annee)
+  if (mode === 'dissolution') {
+    void chargerCompositionDissolution()
+    annee = 2022
+  } else {
+    void chargerResultats(mode)
+    annee = mode;
+  }
 
   /*
    * Supprime la carte électorale courante.
@@ -253,12 +400,20 @@ function afficherCarte(
   geoJsonLayer = L.geoJSON(
       data,
       {
-        style: () => ({
-          color: '#333',
-          weight: 1,
-          fillColor: '#808080',
-          fillOpacity: 0.25,
-        }),
+        style: feature => {
+          const properties =
+              feature?.properties as
+                  CirconscriptionProperties | undefined
+
+          return {
+            color: '#333333',
+            weight: 1,
+            fillColor: properties
+                ? districtColor(Number(properties.CO_CEP))
+                : '#808080',
+            fillOpacity: 0.6,
+          }
+        },
 
         onEachFeature(feature, layer) {
           const properties =
@@ -274,8 +429,7 @@ function afficherCarte(
 
               target.setStyle({
                 weight: 2,
-                fillColor: '#444444',
-                fillOpacity: 0.5,
+                fillOpacity: 0.85,
               })
             },
 
@@ -300,8 +454,7 @@ function afficherCarte(
               // Même style que le survol
               selectedLayer.setStyle({
                 weight: 2,
-                fillColor: '#444444',
-                fillOpacity: 0.5,
+                fillOpacity: 0.85,
               })
 
               // @todo Aller vers la circonscription
@@ -312,6 +465,13 @@ function afficherCarte(
   )
 
   geoJsonLayer.addTo(map)
+}
+
+function afficherDissolution() {
+  afficherCarte(
+      carte2022,
+      'dissolution',
+  )
 }
 
 function afficherCarte2022() {
@@ -412,14 +572,21 @@ onUnmounted(() => {
     <!-- Sélection de l'année -->
     <div class="year-links">
       <button
-          :class="{ active: anneeCarte === 2022 }"
+          :class="{ active: modeCarte === 2022 }"
           @click="afficherCarte2022"
       >
         2022
       </button>
 
       <button
-          :class="{ active: anneeCarte === 2026 }"
+          :class="{ active: modeCarte === 'dissolution' }"
+          @click="afficherDissolution"
+      >
+        Dissolution
+      </button>
+
+      <button
+          :class="{ active: modeCarte === 2026 }"
           @click="afficherCarte2026"
       >
         2026
@@ -435,8 +602,8 @@ onUnmounted(() => {
         <span>Parti</span>
 
         <span>
-      Gagnées / En avance
-    </span>
+          {{ partyStandingsLabel }}
+        </span>
       </div>
 
       <div
@@ -467,15 +634,23 @@ onUnmounted(() => {
           </div>
 
           <div class="party-seats">
-            <strong>
-              {{ party.won_district_count }}
-            </strong>
+            <template v-if="modeCarte !== 2026">
+              <strong>
+                {{ party.won_district_count }}
+              </strong>
+            </template>
 
-            <span>/</span>
+            <template v-else>
+              <strong>
+                {{ party.won_district_count }}
+              </strong>
 
-            <strong>
-              {{ party.leading_district_count }}
-            </strong>
+              <span>/</span>
+
+              <strong>
+                {{ party.leading_district_count }}
+              </strong>
+            </template>
           </div>
         </div>
       </template>
