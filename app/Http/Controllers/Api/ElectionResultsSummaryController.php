@@ -135,6 +135,12 @@ class ElectionResultsSummaryController extends Controller
                     // Les partis ayant des résultats passent toujours avant 0 / 0.
                     $hasDistrict ? 0 : 1,
 
+                    // Les candidats indépendants ayant un siège passent après
+                    // tous les autres partis ayant des résultats.
+                    $hasDistrict && $result->party->source_party_number === 0
+                        ? 1
+                        : 0,
+
                     // Tri décroissant des circonscriptions en avance.
                     -$result->leading_district_count,
 
