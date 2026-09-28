@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\DB;
 
 class ElectionResultsSummaryController extends Controller
 {
+    private const array PRIORITY_PARTY_NUMBERS = [
+        27, // Coalition avenir Québec
+        6,  // Parti libéral du Québec
+        40, // Québec solidaire
+        8,  // Parti québécois
+        22, // Parti conservateur du Québec
+    ];
+
     public function __invoke(Election $election): JsonResponse
     {
         $snapshot = $election
@@ -21,13 +29,39 @@ class ElectionResultsSummaryController extends Controller
             ->first();
 
         if ($snapshot === null) {
+
+            $parties = $election
+                ->parties()
+                ->whereIn('source_party_number', self::PRIORITY_PARTY_NUMBERS)
+                ->get()
+                ->sortBy(
+                    fn ($party): int => array_search(
+                        $party->source_party_number,
+                        self::PRIORITY_PARTY_NUMBERS,
+                        true
+                    )
+                )
+                ->values()
+                ->map(
+                    fn ($party): array => [
+                        'name'         => $party->name,
+                        'abbreviation' => $party->abbreviation,
+                        'color'        => $party->color
+                            ? "#{$party->color}"
+                            : null,
+                        'won_district_count'     => 0,
+                        'leading_district_count' => 0,
+                    ]
+                );
+
             return response()->json([
                 'election' => [
                     'year'          => $election->year,
                     'captured_at'   => null,
                     'results_final' => false,
                 ],
-                'parties' => [],
+                'parties'   => $parties,
+                'districts' => [],
             ]);
         }
 
@@ -112,14 +146,6 @@ class ElectionResultsSummaryController extends Controller
 
         $sortedPartyResults = $snapshot->partyResults
             ->sortBy(function ($result): array {
-                $priorityPartyNumbers = [
-                    8,  // Parti québécois
-                    6,  // Parti conservateur
-                    40, // Parti libéral
-                    27, // Coalition avenir Québec
-                    22, // Québec solidaire
-                ];
-
                 $hasDistrict = (
                     $result->won_district_count > 0 ||
                     $result->leading_district_count > 0
@@ -127,7 +153,7 @@ class ElectionResultsSummaryController extends Controller
 
                 $priority = array_search(
                     $result->party->source_party_number,
-                    $priorityPartyNumbers,
+                    self::PRIORITY_PARTY_NUMBERS,
                     true
                 );
 
