@@ -6,9 +6,9 @@ import '../../../css/map.css';
 
 import { union } from '@turf/union';
 import { difference } from '@turf/difference';
-import { polygon, featureCollection } from '@turf/helpers';
+import { featureCollection, polygon } from '@turf/helpers';
 
-import type { FeatureCollection, Polygon, MultiPolygon } from 'geojson';
+import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 
 import carte2026Json from '@/assets/circonscriptions_electorales_2026_simplifie.json';
 import carte2022Json from '@/assets/circonscriptions_electorales_2022_simplifie.json';
@@ -38,6 +38,26 @@ interface DistrictStanding {
     results_final: boolean;
 }
 
+interface CandidateStanding {
+    id: number;
+    first_name: string;
+    last_name: string;
+    party_name: string | null;
+    party_abbreviation: string | null;
+    party_color: string | null;
+    vote_count: number | null;
+    vote_rate: number | null;
+}
+
+interface DistrictResults {
+    district: {
+        source_district_number: number;
+        name: string;
+        results_final: boolean;
+    };
+    candidates: CandidateStanding[];
+}
+
 interface ElectionSummary {
     election: {
         year: number;
@@ -53,6 +73,7 @@ const partyStandingsLabel = computed(() =>
 );
 
 const partyStandings = ref<PartyStanding[]>([]);
+const selectedDistrictResults = ref<DistrictResults | null>(null);
 const resultsLoading = ref(false);
 const resultsError = ref<string | null>(null);
 
@@ -300,8 +321,60 @@ async function chargerResultats(annee: 2022 | 2026): Promise<void> {
     }
 }
 
+async function chargerResultatsCirconscription(
+    districtNumber: number,
+): Promise<void> {
+    if (modeCarte.value === 'dissolution') {
+        return;
+    }
+
+    resultsAbortController?.abort();
+
+    const controller = new AbortController();
+
+    resultsAbortController = controller;
+    resultsLoading.value = true;
+    resultsError.value = null;
+
+    try {
+        const response = await fetch(
+            `/api/elections/${modeCarte.value}/districts/${districtNumber}/results`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                },
+                signal: controller.signal,
+            },
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Unable to load district results: ${response.status}`,
+            );
+        }
+
+        selectedDistrictResults.value =
+            (await response.json()) as DistrictResults;
+    } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+            return;
+        }
+
+        selectedDistrictResults.value = null;
+        resultsError.value =
+            'Impossible de charger les résultats de la circonscription.';
+    } finally {
+        if (resultsAbortController === controller) {
+            resultsLoading.value = false;
+        }
+    }
+}
+
 function afficherCarte(data: CarteElectorale, mode: MapMode) {
     modeCarte.value = mode;
+
+    selectedDistrictResults.value = null;
+    selectedLayer = null;
 
     if (!map) {
         return;
@@ -389,7 +462,11 @@ function afficherCarte(data: CarteElectorale, mode: MapMode) {
                         fillOpacity: 0.85,
                     });
 
-                    // @todo Aller vers la circonscription
+                    if (modeCarte.value !== 'dissolution') {
+                        void chargerResultatsCirconscription(
+                            Number(properties.CO_CEP),
+                        );
+                    }
                 },
             });
         },
@@ -501,14 +578,38 @@ onUnmounted(() => {
         </div>
 
         <!-- Résultats par parti -->
-        <section class="party-standings" aria-label="Résultats des partis">
-            <div class="party-standings-header">
-                <span>Parti</span>
+        <section class="party-standings" aria-label="Résultats">
+            <template v-if="selectedDistrictResults">
+                <div
+                    class="party-standings-header"
+                    :class="{ 'district-header': selectedDistrictResults }"
+                >
+                    <strong>
+                        {{ selectedDistrictResults.district.name }}
+                    </strong>
 
-                <span>
-                    {{ partyStandingsLabel }}
-                </span>
-            </div>
+                    <button
+                        type="button"
+                        class="district-back"
+                        @click="selectedDistrictResults = null"
+                    >
+                        ← Tous les résultats
+                    </button>
+                </div>
+            </template>
+
+            <template v-else>
+                <div
+                    class="party-standings-header"
+                    :class="{ 'district-header': selectedDistrictResults }"
+                >
+                    <span>Parti</span>
+
+                    <span>
+                        {{ partyStandingsLabel }}
+                    </span>
+                </div>
+            </template>
 
             <div v-if="resultsLoading" class="party-standings-message">
                 Chargement...
@@ -517,6 +618,54 @@ onUnmounted(() => {
             <div v-else-if="resultsError" class="party-standings-message">
                 {{ resultsError }}
             </div>
+
+            <template v-else-if="selectedDistrictResults">
+                <div
+                    v-for="candidate in selectedDistrictResults.candidates"
+                    :key="candidate.id"
+                    class="party-standing"
+                    :style="{
+                        backgroundColor: partyColor(candidate.party_color),
+                    }"
+                >
+                    <div class="party-name">
+                        <strong>
+                            {{ candidate.first_name }}
+                            {{ candidate.last_name }}
+                        </strong>
+
+                        <div class="candidate-party">
+                            {{ candidate.party_name ?? 'Candidat indépendant' }}
+                        </div>
+                    </div>
+
+                    <div class="party-seats">
+                        <strong>
+                            {{
+                                candidate.vote_count?.toLocaleString('fr-CA') ??
+                                '—'
+                            }}
+                        </strong>
+
+                        <span v-if="candidate.vote_rate !== null">
+                            {{
+                                candidate.vote_rate.toLocaleString('fr-CA', {
+                                    minimumFractionDigits: 1,
+                                    maximumFractionDigits: 1,
+                                })
+                            }}
+                            %
+                        </span>
+                    </div>
+                </div>
+
+                <div
+                    v-if="selectedDistrictResults.candidates.length === 0"
+                    class="party-standings-message"
+                >
+                    Aucun candidat disponible.
+                </div>
+            </template>
 
             <template v-else>
                 <div
@@ -585,7 +734,8 @@ onUnmounted(() => {
     right: 20px;
     z-index: 1000;
 
-    width: 360px;
+    width: 420px;
+    max-width: calc(100vw - 40px);
 
     overflow: hidden;
 
@@ -608,6 +758,16 @@ onUnmounted(() => {
     background: #222222;
 }
 
+.party-standings-header.district-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+}
+
+.district-header strong {
+    font-size: 0.9rem;
+}
+
 .party-standings-message {
     padding: 16px 12px;
 
@@ -620,7 +780,7 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
 
     min-height: 52px;
     padding: 8px 12px;
@@ -630,14 +790,13 @@ onUnmounted(() => {
 }
 
 .party-name {
+    flex: 1;
     min-width: 0;
-
-    overflow: hidden;
 
     font-weight: 600;
 
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
 }
 
 .party-seats {
@@ -646,12 +805,16 @@ onUnmounted(() => {
     align-items: baseline;
     gap: 5px;
 
-    font-size: 1.2rem;
+    white-space: nowrap;
+
+    font-size: 1.1rem;
     font-variant-numeric: tabular-nums;
 }
 
 .party-seats span {
-    opacity: 0.75;
+    font-size: 0.95rem;
+    font-weight: 400;
+    opacity: 0.8;
 }
 
 .map-page {
@@ -730,5 +893,35 @@ onUnmounted(() => {
 
 .city-links button:hover {
     background: #222222;
+}
+
+.district-back {
+    width: fit-content;
+    padding: 0;
+
+    border: 0;
+
+    color: #cccccc;
+    background: transparent;
+
+    font: inherit;
+    cursor: pointer;
+}
+
+.district-back:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.candidate-party {
+    margin-top: 1px;
+
+    font-size: 0.9rem;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.party-seats strong {
+    font-weight: 700;
 }
 </style>

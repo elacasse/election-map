@@ -50,6 +50,7 @@ class BackfillPartyColors extends Command
             99375 => '3A6EA5', // Osons Québec
         ];
 
+        /** @noinspection DuplicatedCode */
         $query = ElectionParty::query()
             ->with('election')
             ->orderBy('source_party_number');
