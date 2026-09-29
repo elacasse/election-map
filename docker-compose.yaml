@@ -19,6 +19,22 @@ x-app-base: &app-base
             condition: service_healthy
 
 services:
+    test:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        working_dir: /var/www/election-map
+        user: '${UID}:${GID}'
+        volumes:
+            - .:/var/www/election-map
+        environment:
+            APP_ENV: testing
+            DB_CONNECTION: sqlite
+            DB_DATABASE: ':memory:'
+        command: php artisan test
+        profiles:
+            - test
+
     app:
         <<: *app-base
         container_name: election-map-app
