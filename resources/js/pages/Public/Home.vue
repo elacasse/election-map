@@ -7,6 +7,7 @@ import '../../../css/map.css';
 import { union } from '@turf/union';
 import { difference } from '@turf/difference';
 import { featureCollection, polygon } from '@turf/helpers';
+import { useElectionSnapshotUpdates } from '@/composables/useElectionSnapshotUpdates';
 
 import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 

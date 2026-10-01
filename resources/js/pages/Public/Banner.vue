@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { useElectionSnapshotUpdates } from '@/composables/useElectionSnapshotUpdates';
 
 interface PartyStanding {
     name: string;
@@ -71,14 +72,17 @@ function partyScore(party: PartyStanding): string {
     return `${party.won_district_count} / ${party.leading_district_count}`;
 }
 
-async function chargerResultats(): Promise<void> {
+async function chargerResultats(silent = false): Promise<void> {
     abortController?.abort();
 
     const controller = new AbortController();
 
     abortController = controller;
-    loading.value = true;
-    error.value = null;
+
+    if (!silent) {
+        loading.value = true;
+        error.value = null;
+    }
 
     try {
         const response = await fetch(
@@ -101,6 +105,7 @@ async function chargerResultats(): Promise<void> {
 
         election.value = data.election;
         parties.value = data.parties;
+        error.value = null;
     } catch (exception) {
         if (
             exception instanceof DOMException &&
@@ -109,11 +114,13 @@ async function chargerResultats(): Promise<void> {
             return;
         }
 
-        election.value = null;
-        parties.value = [];
-        error.value = 'Impossible de charger les résultats.';
+        if (!silent) {
+            election.value = null;
+            parties.value = [];
+            error.value = 'Impossible de charger les résultats.';
+        }
     } finally {
-        if (abortController === controller) {
+        if (!silent && abortController === controller) {
             loading.value = false;
         }
     }
@@ -126,6 +133,14 @@ onMounted(() => {
 onUnmounted(() => {
     abortController?.abort();
     abortController = null;
+});
+
+useElectionSnapshotUpdates(() => {
+    if (year.value !== 2026) {
+        return;
+    }
+
+    void chargerResultats(true);
 });
 </script>
 
@@ -173,7 +188,7 @@ onUnmounted(() => {
                             </div>
 
                             <div class="party-score-label">
-                                Élu / En avance
+                                {{ election?.results_final ? 'Élu' : 'Élu / En avance' }}
                             </div>
                         </div>
                     </div>
