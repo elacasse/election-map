@@ -211,6 +211,8 @@ class ElectionResultsSummaryController extends Controller
                         : null,
                     'won_district_count'     => $result->won_district_count,
                     'leading_district_count' => $result->leading_district_count,
+                    'vote_rate'              => $result->vote_rate,
+                    'vote_count'             => $result->vote_count,
                 ]
             )->values(),
 

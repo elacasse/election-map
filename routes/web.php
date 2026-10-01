@@ -26,6 +26,9 @@ Route::get('/test/resultats2022.json', function (Request $request) {
 Route::inertia('/', 'Public/Home')
     ->name('home');
 
+Route::inertia('/banner', 'Public/Banner')
+    ->name('banner');
+
 // Admin website
 Route::prefix('admin')
     ->name('admin.')

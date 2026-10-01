@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\ElectionSnapshotCreated;
 use App\Models\Candidate;
 use App\Models\CandidateResult;
 use App\Models\DistrictResult;
@@ -216,7 +217,7 @@ class ElectionResultsImporter
          *
          * Les imports suivants n'y touchent plus.
          */
-        return DB::transaction(
+        $snapshot = DB::transaction(
             function () use (
                 $election,
                 $results,
@@ -269,6 +270,10 @@ class ElectionResultsImporter
                 return $snapshot;
             }
         );
+
+        ElectionSnapshotCreated::dispatch($snapshot);
+
+        return $snapshot;
     }
 
     /**
