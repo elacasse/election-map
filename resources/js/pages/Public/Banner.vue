@@ -38,9 +38,7 @@ const year = computed(() => {
     return Number.isInteger(value) && value > 0 ? value : DEFAULT_YEAR;
 });
 
-const displayedParties = computed(() =>
-    parties.value.slice(0, PARTY_COUNT),
-);
+const displayedParties = computed(() => parties.value.slice(0, PARTY_COUNT));
 
 function partyVoteRate(party: PartyStanding): string {
     return `${Number(party.vote_rate).toLocaleString('fr-CA', {
@@ -146,25 +144,19 @@ useElectionSnapshotUpdates(() => {
 
 <template>
     <main class="banner-page">
-        <div v-if="loading" class="banner-message">
-            Chargement…
-        </div>
+        <div v-if="loading" class="banner-message">Chargement…</div>
 
         <div v-else-if="error" class="banner-message banner-error">
             {{ error }}
         </div>
 
-        <section
-                v-else
-                class="party-results"
-                aria-label="Résultats par parti"
-        >
+        <section v-else class="party-results" aria-label="Résultats par parti">
             <article
-                    v-for="(party, index) in displayedParties"
-                    :key="`${party.abbreviation}-${index}`"
-                    class="party-card"
-                    :class="{ leader: index === 0 }"
-                    :style="{ '--party-color': partyColor(party.color) }"
+                v-for="(party, index) in displayedParties"
+                :key="`${party.abbreviation}-${index}`"
+                class="party-card"
+                :class="{ leader: index === 0 }"
+                :style="{ '--party-color': partyColor(party.color) }"
             >
                 <div class="party-content">
                     <div class="party-name">
@@ -188,7 +180,11 @@ useElectionSnapshotUpdates(() => {
                             </div>
 
                             <div class="party-score-label">
-                                {{ election?.results_final ? 'Élu' : 'Élu / En avance' }}
+                                {{
+                                    election?.results_final
+                                        ? 'Élu'
+                                        : 'Élu / En avance'
+                                }}
                             </div>
                         </div>
                     </div>
@@ -212,13 +208,13 @@ useElectionSnapshotUpdates(() => {
 :global(body) {
     background: transparent;
     font-family:
-            Inter,
-            ui-sans-serif,
-            system-ui,
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            sans-serif;
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        sans-serif;
 }
 
 * {

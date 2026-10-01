@@ -270,14 +270,20 @@ async function chargerCompositionDissolution(): Promise<void> {
     }
 }
 
-async function chargerResultats(annee: 2022 | 2026): Promise<void> {
+async function chargerResultats(
+    annee: 2022 | 2026,
+    silent = false,
+): Promise<void> {
     resultsAbortController?.abort();
 
     const controller = new AbortController();
 
     resultsAbortController = controller;
-    resultsLoading.value = true;
-    resultsError.value = null;
+
+    if (!silent) {
+        resultsLoading.value = true;
+        resultsError.value = null;
+    }
 
     try {
         const response = await fetch(
@@ -308,15 +314,18 @@ async function chargerResultats(annee: 2022 | 2026): Promise<void> {
         );
 
         appliquerCouleursCirconscriptions();
+        resultsError.value = null;
     } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') {
             return;
         }
 
-        partyStandings.value = [];
-        resultsError.value = 'Impossible de charger les résultats.';
+        if (!silent) {
+            partyStandings.value = [];
+            resultsError.value = 'Impossible de charger les résultats.';
+        }
     } finally {
-        if (resultsAbortController === controller) {
+        if (!silent && resultsAbortController === controller) {
             resultsLoading.value = false;
         }
     }
@@ -324,6 +333,7 @@ async function chargerResultats(annee: 2022 | 2026): Promise<void> {
 
 async function chargerResultatsCirconscription(
     districtNumber: number,
+    silent = false,
 ): Promise<void> {
     if (modeCarte.value === 'dissolution') {
         return;
@@ -334,8 +344,11 @@ async function chargerResultatsCirconscription(
     const controller = new AbortController();
 
     resultsAbortController = controller;
-    resultsLoading.value = true;
-    resultsError.value = null;
+
+    if (!silent) {
+        resultsLoading.value = true;
+        resultsError.value = null;
+    }
 
     try {
         const response = await fetch(
@@ -356,16 +369,20 @@ async function chargerResultatsCirconscription(
 
         selectedDistrictResults.value =
             (await response.json()) as DistrictResults;
+
+        resultsError.value = null;
     } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') {
             return;
         }
 
-        selectedDistrictResults.value = null;
-        resultsError.value =
-            'Impossible de charger les résultats de la circonscription.';
+        if (!silent) {
+            selectedDistrictResults.value = null;
+            resultsError.value =
+                'Impossible de charger les résultats de la circonscription.';
+        }
     } finally {
-        if (resultsAbortController === controller) {
+        if (!silent && resultsAbortController === controller) {
             resultsLoading.value = false;
         }
     }
@@ -487,6 +504,21 @@ function afficherCarte2022() {
 function afficherCarte2026() {
     afficherCarte(carte2026, 2026);
 }
+
+useElectionSnapshotUpdates(async () => {
+    if (modeCarte.value !== 2026) {
+        return;
+    }
+
+    const districtNumber =
+        selectedDistrictResults.value?.district.source_district_number ?? null;
+
+    await chargerResultats(2026, true);
+
+    if (districtNumber !== null) {
+        await chargerResultatsCirconscription(districtNumber, true);
+    }
+});
 
 onMounted(() => {
     if (!mapElement.value) {
