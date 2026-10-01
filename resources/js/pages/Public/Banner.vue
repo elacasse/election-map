@@ -94,9 +94,13 @@ async function chargerResultats(silent = false): Promise<void> {
         );
 
         if (!response.ok) {
-            throw new Error(
-                `Unable to load election results: ${response.status}`,
-            );
+            if (!silent) {
+                election.value = null;
+                parties.value = [];
+                error.value = 'Impossible de charger les résultats.';
+            }
+
+            return;
         }
 
         const data = (await response.json()) as ElectionSummary;
@@ -156,7 +160,7 @@ useElectionSnapshotUpdates(() => {
                 :key="`${party.abbreviation}-${index}`"
                 class="party-card"
                 :class="{ leader: index === 0 }"
-                :style="{ '--party-color': partyColor(party.color) }"
+                :style="{ backgroundColor: partyColor(party.color) }"
             >
                 <div class="party-content">
                     <div class="party-name">
@@ -196,8 +200,7 @@ useElectionSnapshotUpdates(() => {
 
 <style scoped>
 :global(html),
-:global(body),
-:global(#app) {
+:global(body) {
     width: 1920px;
     height: 360px;
     margin: 0;
@@ -246,7 +249,6 @@ useElectionSnapshotUpdates(() => {
 
     min-width: 0;
 
-    background: var(--party-color);
     color: #ffffff;
 }
 

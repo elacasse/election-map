@@ -230,9 +230,13 @@ async function chargerCompositionDissolution(): Promise<void> {
         });
 
         if (!response.ok) {
-            throw new Error(
-                `Unable to load assembly composition: ${response.status}`,
-            );
+            partyStandings.value = [];
+            districtStandings.value = new Map();
+
+            resultsError.value =
+                'Impossible de charger la composition de l’Assemblée.';
+
+            return;
         }
 
         const data = (await response.json()) as AssemblyDissolutionSummary;
@@ -297,9 +301,12 @@ async function chargerResultats(
         );
 
         if (!response.ok) {
-            throw new Error(
-                `Unable to load election results: ${response.status}`,
-            );
+            if (!silent) {
+                partyStandings.value = [];
+                resultsError.value = 'Impossible de charger les résultats.';
+            }
+
+            return;
         }
 
         const data = (await response.json()) as ElectionSummary;
@@ -362,9 +369,13 @@ async function chargerResultatsCirconscription(
         );
 
         if (!response.ok) {
-            throw new Error(
-                `Unable to load district results: ${response.status}`,
-            );
+            if (!silent) {
+                selectedDistrictResults.value = null;
+                resultsError.value =
+                    'Impossible de charger les résultats de la circonscription.';
+            }
+
+            return;
         }
 
         selectedDistrictResults.value =
@@ -693,7 +704,7 @@ onUnmounted(() => {
                 </div>
 
                 <div
-                    v-if="selectedDistrictResults.candidates.length === 0"
+                    v-if="selectedDistrictResults?.candidates.length === 0"
                     class="party-standings-message"
                 >
                     Aucun candidat disponible.
