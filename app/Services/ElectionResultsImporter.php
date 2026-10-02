@@ -367,7 +367,7 @@ class ElectionResultsImporter
                 $normalized['districts'][$districtNumber]['candidates'][$candidateNumber] = [
                     'vote_count'         => (int) $candidate['nbVoteTotal'],
                     'vote_rate'          => $this->normalizeNumber($candidate['tauxVote']),
-                    'advance_vote_count' => (int) $candidate['nbVoteAvance'],
+                    'lead_vote_count' => (int) $candidate['nbVoteAvance'],
                 ];
             }
 
@@ -588,6 +588,18 @@ class ElectionResultsImporter
         return (float) $value;
     }
 
+    /**
+     * Count the number of won electoral districts for each political party.
+     *
+     * Only districts whose results are marked as final are considered. For each
+     * final district, candidates are ordered by total vote count and the party of
+     * the candidate with the highest number of votes is credited with one win.
+     *
+     * Districts without candidates are ignored.
+     *
+     * @param  array<int, array<string, mixed>>  $districts
+     * @return array<int, int> Number of won districts indexed by source party number.
+     */
     private function getWonDistrictCountsByParty(array $districts): array
     {
         $counts = [];
@@ -716,7 +728,7 @@ class ElectionResultsImporter
                 'candidate_id'       => $candidate->id,
                 'vote_count'         => $candidateData['nbVoteTotal'],
                 'vote_rate'          => $candidateData['tauxVote'],
-                'advance_vote_count' => $candidateData['nbVoteAvance'],
+                'lead_vote_count' => $candidateData['nbVoteAvance'],
             ]);
         }
     }

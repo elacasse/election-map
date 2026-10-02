@@ -7,6 +7,16 @@ use App\Models\Election;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Return a summary of the latest results for an election.
+ *
+ * The summary provides the high-level data required by the election results
+ * interface, including the timestamp and final status of the latest snapshot,
+ * party standings, and district-level result information.
+ *
+ * At least five parties are included. All parties winning or leading in a
+ * district are retained, even when this results in more than five entries.
+ */
 class ElectionResultsSummaryController extends Controller
 {
     private const array PRIORITY_PARTY_NUMBERS = [
@@ -17,6 +27,15 @@ class ElectionResultsSummaryController extends Controller
         22, // Parti conservateur du Québec
     ];
 
+    /**
+     * Return the latest results summary for the given election.
+     *
+     * The election is resolved through route model binding using its year.
+     *
+     * If no results snapshot exists yet, the response contains the election
+     * metadata and the predefined priority parties with zero won or leading
+     * districts. The district list is empty.
+     */
     public function __invoke(Election $election): JsonResponse
     {
         $snapshot = $election
@@ -144,6 +163,19 @@ class ElectionResultsSummaryController extends Controller
             })
             ->values();
 
+        /**
+         * Order parties for display in the election summary.
+         *
+         * Parties are ordered according to the following rules:
+         *
+         * 1. Parties winning or leading in at least one district come first.
+         * 2. Independent candidates with results come after political parties
+         *    that also have results.
+         * 3. Parties are ranked by the number of districts they are leading.
+         * 4. Ties are resolved using the number of districts already won.
+         * 5. Parties with no won or leading districts use a predefined priority.
+         * 6. The party name provides a deterministic final ordering.
+         */
         $sortedPartyResults = $snapshot->partyResults
             ->sortBy(function ($result): array {
                 $hasDistrict = (

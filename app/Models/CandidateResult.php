@@ -13,7 +13,7 @@ class CandidateResult extends Model
         'candidate_id',
         'vote_count',
         'vote_rate',
-        'advance_vote_count',
+        'lead_vote_count',
     ];
     protected $casts = [
         'snapshot_id'  => 'integer',
@@ -21,7 +21,7 @@ class CandidateResult extends Model
 
         'vote_count'         => 'integer',
         'vote_rate'          => 'decimal:4',
-        'advance_vote_count' => 'integer',
+        'lead_vote_count' => 'integer',
     ];
 
     public function snapshot(): BelongsTo

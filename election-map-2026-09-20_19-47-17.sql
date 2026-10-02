@@ -1,4 +1,4 @@
-/*M!999999\- enable the sandbox mode */ 
+/*M!999999\- enable the sandbox mode */
 -- MariaDB dump 10.20-12.3.3-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: election_map
@@ -89,7 +89,7 @@ CREATE TABLE `candidate_results` (
   `candidate_id` bigint(20) unsigned NOT NULL,
   `vote_count` int(10) unsigned NOT NULL,
   `vote_rate` decimal(7,4) NOT NULL,
-  `advance_vote_count` int(10) unsigned NOT NULL,
+  `lead_vote_count` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `candidate_results_snapshot_id_candidate_id_unique` (`snapshot_id`,`candidate_id`),
   KEY `candidate_results_candidate_id_snapshot_id_index` (`candidate_id`,`snapshot_id`),

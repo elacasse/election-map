@@ -22,7 +22,7 @@ return new class () extends Migration {
 
             $table->decimal('vote_rate', 7, 4);
 
-            $table->unsignedInteger('advance_vote_count');
+            $table->unsignedInteger('lead_vote_count');
 
             $table->unique([
                 'snapshot_id',
