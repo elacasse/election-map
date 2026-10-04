@@ -19,8 +19,8 @@ class CandidateResult extends Model
         'snapshot_id'  => 'integer',
         'candidate_id' => 'integer',
 
-        'vote_count'         => 'integer',
-        'vote_rate'          => 'decimal:4',
+        'vote_count'      => 'integer',
+        'vote_rate'       => 'decimal:4',
         'lead_vote_count' => 'integer',
     ];
 

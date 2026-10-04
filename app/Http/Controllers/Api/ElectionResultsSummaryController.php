@@ -68,8 +68,9 @@ class ElectionResultsSummaryController extends Controller
                         'color'        => $party->color
                             ? "#{$party->color}"
                             : null,
-                        'won_district_count'     => 0,
-                        'leading_district_count' => 0,
+                        'won_district_count'       => 0,
+                        'projected_district_count' => 0,
+                        'leading_district_count'   => 0,
                     ]
                 );
 
@@ -92,6 +93,7 @@ class ElectionResultsSummaryController extends Controller
                 'election_parties.color as party_color',
                 'candidate_results.vote_count',
                 'district_results.results_final',
+                'district_results.status',
             ])
             ->join(
                 'candidates',
@@ -159,6 +161,10 @@ class ElectionResultsSummaryController extends Controller
                         : $first->party_color,
 
                     'results_final' => (bool) $first->results_final,
+
+                    'status' => $isTied
+                        ? null
+                        : $first->status,
                 ];
             })
             ->values();
@@ -202,6 +208,9 @@ class ElectionResultsSummaryController extends Controller
                     // Tri décroissant des circonscriptions en avance.
                     -$result->leading_district_count,
 
+                    // Puis projetées.
+                    -$result->projected_district_count,
+
                     // Puis gagnées, si nécessaire.
                     -$result->won_district_count,
 
@@ -241,10 +250,11 @@ class ElectionResultsSummaryController extends Controller
                     'color'        => $result->party->color
                         ? "#{$result->party->color}"
                         : null,
-                    'won_district_count'     => $result->won_district_count,
-                    'leading_district_count' => $result->leading_district_count,
-                    'vote_rate'              => $result->vote_rate,
-                    'vote_count'             => $result->vote_count,
+                    'won_district_count'       => $result->won_district_count,
+                    'projected_district_count' => $result->projected_district_count,
+                    'leading_district_count'   => $result->leading_district_count,
+                    'vote_rate'                => $result->vote_rate,
+                    'vote_count'               => $result->vote_count,
                 ]
             )->values(),
 
