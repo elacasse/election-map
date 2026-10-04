@@ -25,11 +25,14 @@ type CarteElectorale = FeatureCollection<
     CirconscriptionProperties
 >;
 
+type DistrictStatus = 'elected' | 'projected' | 'leading' | null;
+
 interface PartyStanding {
     name: string;
     abbreviation: string;
     color: string | null;
     won_district_count: number;
+    projected_district_count: number;
     leading_district_count: number;
 }
 
@@ -37,6 +40,7 @@ interface DistrictStanding {
     source_district_number: number;
     party_color: string | null;
     results_final: boolean;
+    status: DistrictStatus;
 }
 
 interface CandidateStanding {
@@ -55,6 +59,7 @@ interface DistrictResults {
         source_district_number: number;
         name: string;
         results_final: boolean;
+        status: DistrictStatus;
     };
     candidates: CandidateStanding[];
 }
@@ -70,7 +75,7 @@ interface ElectionSummary {
 }
 
 const partyStandingsLabel = computed(() =>
-    modeCarte.value !== 2026 ? 'Sièges' : 'Gagnées / En avance',
+    modeCarte.value !== 2026 ? 'Sièges' : 'Élus / Projetés / En avance',
 );
 
 const partyStandings = ref<PartyStanding[]>([]);
@@ -200,6 +205,22 @@ function appliquerCouleursCirconscriptions(): void {
     });
 }
 
+function districtStatusLabel(status: DistrictStatus): string | null {
+    switch (status) {
+        case 'elected':
+            return 'Élu';
+
+        case 'projected':
+            return 'Projeté';
+
+        case 'leading':
+            return 'En avance';
+
+        default:
+            return null;
+    }
+}
+
 interface AssemblyDissolutionSummary {
     parties: {
         name: string;
@@ -246,6 +267,7 @@ async function chargerCompositionDissolution(): Promise<void> {
             abbreviation: party.abbreviation,
             color: party.color,
             won_district_count: party.won_district_count,
+            projected_district_count: party.won_district_count,
             leading_district_count: party.leading_district_count,
         }));
 
@@ -734,6 +756,12 @@ onUnmounted(() => {
                         <template v-else>
                             <strong>
                                 {{ party.won_district_count }}
+                            </strong>
+
+                            <span>/</span>
+
+                            <strong>
+                                {{ party.projected_district_count }}
                             </strong>
 
                             <span>/</span>

@@ -9,6 +9,7 @@ interface PartyStanding {
     vote_count: number;
     vote_rate: number;
     won_district_count: number;
+    projected_district_count: number;
     leading_district_count: number;
 }
 
@@ -67,7 +68,11 @@ function partyScore(party: PartyStanding): string {
         return `${party.won_district_count}`;
     }
 
-    return `${party.won_district_count} / ${party.leading_district_count}`;
+    return [
+        party.won_district_count,
+        party.projected_district_count,
+        party.leading_district_count,
+    ].join(' / ');
 }
 
 async function chargerResultats(silent = false): Promise<void> {
@@ -187,7 +192,7 @@ useElectionSnapshotUpdates(() => {
                                 {{
                                     election?.results_final
                                         ? 'Élu'
-                                        : 'Élu / En avance'
+                                        : 'Élu / Projeté / En avance'
                                 }}
                             </div>
                         </div>
