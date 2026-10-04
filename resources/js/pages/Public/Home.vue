@@ -687,7 +687,9 @@ onUnmounted(() => {
 
             <template v-else-if="selectedDistrictResults">
                 <div
-                    v-for="candidate in selectedDistrictResults.candidates"
+                    v-for="(
+                        candidate, index
+                    ) in selectedDistrictResults.candidates"
                     :key="candidate.id"
                     class="party-standing"
                     :style="{
@@ -721,6 +723,19 @@ onUnmounted(() => {
                                 })
                             }}
                             %
+                        </span>
+
+                        <span
+                            v-if="
+                                index === 0 &&
+                                selectedDistrictResults.district.status !== null
+                            "
+                        >
+                            {{
+                                districtStatusLabel(
+                                    selectedDistrictResults.district.status,
+                                )
+                            }}
                         </span>
                     </div>
                 </div>
