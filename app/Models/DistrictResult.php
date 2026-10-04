@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\DistrictResultStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,6 +50,7 @@ class DistrictResult extends Model
         'rejected_vote_rate'              => 'decimal:4',
         'participation_rate'              => 'decimal:4',
         'results_final'                   => 'bool',
+        'status'                          => DistrictResultStatus::class,
         'source_updated_at'               => 'datetime',
     ];
     protected $fillable = [
@@ -64,6 +66,7 @@ class DistrictResult extends Model
         'rejected_vote_rate',
         'participation_rate',
         'results_final',
+        'status',
         'source_updated_at',
     ];
 

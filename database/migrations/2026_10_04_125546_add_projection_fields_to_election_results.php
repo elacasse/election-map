@@ -10,10 +10,16 @@ return new class () extends Migration {
      */
     public function up(): void
     {
+        Schema::table('district_results', function (Blueprint $table) {
+            $table->string('status', 16)
+                ->nullable()
+                ->after('results_final');
+        });
+
         Schema::table('party_results', function (Blueprint $table) {
-            $table->unsignedSmallInteger('won_district_count')
+            $table->unsignedSmallInteger('projected_district_count')
                 ->default(0)
-                ->after('leading_district_count');
+                ->after('won_district_count');
         });
     }
 
@@ -22,8 +28,12 @@ return new class () extends Migration {
      */
     public function down(): void
     {
+        Schema::table('district_results', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
+
         Schema::table('party_results', function (Blueprint $table) {
-            $table->dropColumn('won_district_count');
+            $table->dropColumn('projected_district_count');
         });
     }
 };

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\DistrictResultStatus;
 use App\Events\ElectionSnapshotCreated;
 use App\Models\Candidate;
 use App\Models\CandidateResult;
@@ -249,7 +250,7 @@ class ElectionResultsImporter
                     $results['statistiques']
                 );
 
-                $wonDistrictCounts = $this->getWonDistrictCountsByParty(
+                $districtAnalysis = $this->analyzeDistrictResults(
                     $results['circonscriptions']
                 );
 
@@ -257,14 +258,15 @@ class ElectionResultsImporter
                     $snapshot,
                     $results['statistiques']['partisPolitiques'] ?? [],
                     $references['parties'],
-                    $wonDistrictCounts
+                    $districtAnalysis['party_counts']
                 );
 
                 $this->storeDistrictResults(
                     $snapshot,
                     $results['circonscriptions'],
                     $references['districts'],
-                    $references['candidates']
+                    $references['candidates'],
+                    $districtAnalysis['statuses']
                 );
 
                 return $snapshot;
@@ -365,8 +367,8 @@ class ElectionResultsImporter
                 $candidateNumber = (int) $candidate['numeroCandidat'];
 
                 $normalized['districts'][$districtNumber]['candidates'][$candidateNumber] = [
-                    'vote_count'         => (int) $candidate['nbVoteTotal'],
-                    'vote_rate'          => $this->normalizeNumber($candidate['tauxVote']),
+                    'vote_count'      => (int) $candidate['nbVoteTotal'],
+                    'vote_rate'       => $this->normalizeNumber($candidate['tauxVote']),
                     'lead_vote_count' => (int) $candidate['nbVoteAvance'],
                 ];
             }
@@ -589,27 +591,27 @@ class ElectionResultsImporter
     }
 
     /**
-     * Count the number of won electoral districts for each political party.
-     *
-     * Only districts whose results are marked as final are considered. For each
-     * final district, candidates are ordered by total vote count and the party of
-     * the candidate with the highest number of votes is credited with one win.
-     *
-     * Districts without candidates are ignored.
+     * Analyse les résultats des circonscriptions afin de déterminer
+     * leur statut et les compteurs cumulatifs par parti.
      *
      * @param  array<int, array<string, mixed>>  $districts
-     * @return array<int, int> Number of won districts indexed by source party number.
+     * @return array{
+     *     statuses: array<int, \App\Enums\DistrictResultStatus>,
+     *     party_counts: array<int, array{
+     *         won: int,
+     *         projected: int,
+     *         leading: int
+     *     }>
+     * }
      */
-    private function getWonDistrictCountsByParty(array $districts): array
+    private function analyzeDistrictResults(array $districts): array
     {
-        $counts = [];
+        $statuses    = [];
+        $partyCounts = [];
 
         foreach ($districts as $district) {
-            if (!($district['isResultatsFinaux'] ?? false)) {
-                continue;
-            }
-
-            $candidates = $district['candidats'] ?? [];
+            $districtNumber = (int) $district['numeroCirconscription'];
+            $candidates     = $district['candidats'] ?? [];
 
             if ($candidates === []) {
                 continue;
@@ -617,15 +619,93 @@ class ElectionResultsImporter
 
             usort(
                 $candidates,
-                fn (array $a, array $b) => ((int) $b['nbVoteTotal']) <=> ((int) $a['nbVoteTotal'])
+                fn (array $a, array $b): int => ((int) $b['nbVoteTotal']) <=> ((int) $a['nbVoteTotal'])
             );
 
-            $partyNumber = (int) $candidates[0]['numeroPartiPolitique'];
+            $leader   = $candidates[0];
+            $runnerUp = $candidates[1] ?? null;
 
-            $counts[$partyNumber] = ($counts[$partyNumber] ?? 0) + 1;
+            if ((int) $leader['nbVoteTotal'] === 0) {
+                continue;
+            }
+
+            if (
+                $runnerUp !== null &&
+                (int) $leader['nbVoteTotal'] === (int) $runnerUp['nbVoteTotal']
+            ) {
+                continue;
+            }
+
+            $status = $this->determineDistrictStatus(
+                $district,
+                $leader
+            );
+
+            $statuses[$districtNumber] = $status;
+
+            $partyNumber = (int) $leader['numeroPartiPolitique'];
+
+            $partyCounts[$partyNumber] ??= [
+                'won'       => 0,
+                'projected' => 0,
+                'leading'   => 0,
+            ];
+
+            /*
+            * Les catégories sont cumulatives :
+            *
+            * élu ⊂ projeté ⊂ en avance
+            */
+            $partyCounts[$partyNumber]['leading']++;
+
+            if (
+                $status === DistrictResultStatus::Projected ||
+                $status === DistrictResultStatus::Elected
+            ) {
+                $partyCounts[$partyNumber]['projected']++;
+            }
+
+            if ($status === DistrictResultStatus::Elected) {
+                $partyCounts[$partyNumber]['won']++;
+            }
         }
 
-        return $counts;
+        return [
+            'statuses'     => $statuses,
+            'party_counts' => $partyCounts,
+        ];
+    }
+
+    private function determineDistrictStatus(
+        array $district,
+        array $leader
+    ): DistrictResultStatus {
+        if ((bool) ($district['isResultatsFinaux'] ?? false)) {
+            return DistrictResultStatus::Elected;
+        }
+
+        $participationRate = $this->parseNullableNumber(
+            $district['tauxParticipation'] ?? null
+        ) ?? 100.0;
+
+        $estimatedFinalVoteCount = (int) ceil(
+            (int) $district['nbElecteurInscrit']
+            * ($participationRate / 100)
+        );
+
+        $remainingVoteCount = max(
+            0,
+            $estimatedFinalVoteCount
+                - (int) $district['nbVoteExerce']
+        );
+
+        $leadVoteCount = (int) ($leader['nbVoteAvance'] ?? 0);
+
+        if ($leadVoteCount > $remainingVoteCount) {
+            return DistrictResultStatus::Projected;
+        }
+
+        return DistrictResultStatus::Leading;
     }
 
     /**
@@ -635,7 +715,7 @@ class ElectionResultsImporter
         ElectionSnapshot $snapshot,
         array $partyResults,
         Collection $parties,
-        array $wonDistrictCounts,
+        array $partyDistrictCounts,
     ): void {
         foreach ($partyResults as $partyData) {
             $partyNumber = (int) $partyData['numeroPartiPolitique'];
@@ -647,14 +727,21 @@ class ElectionResultsImporter
                 throw new RuntimeException("Unknown election party {$partyNumber}.");
             }
 
+            $counts = $partyDistrictCounts[$partyNumber] ?? [
+                'won'       => 0,
+                'projected' => 0,
+                'leading'   => 0,
+            ];
+
             PartyResult::query()->create([
-                'snapshot_id'            => $snapshot->id,
-                'election_party_id'      => $party->id,
-                'vote_count'             => $partyData['nbVoteTotal'],
-                'vote_rate'              => $partyData['tauxVoteTotal'],
-                'leading_district_count' => $partyData['nbCirconscriptionsEnAvance'],
-                'won_district_count'     => $wonDistrictCounts[$partyNumber] ?? 0,
-                'leading_district_rate'  => $partyData['tauxCirconscriptionsEnAvance'],
+                'snapshot_id'              => $snapshot->id,
+                'election_party_id'        => $party->id,
+                'vote_count'               => $partyData['nbVoteTotal'],
+                'vote_rate'                => $partyData['tauxVoteTotal'],
+                'leading_district_count'   => $counts['leading'],
+                'won_district_count'       => $counts['won'],
+                'projected_district_count' => $counts['projected'],
+                'leading_district_rate'    => $partyData['tauxCirconscriptionsEnAvance'],
             ]);
         }
     }
@@ -667,7 +754,8 @@ class ElectionResultsImporter
         ElectionSnapshot $snapshot,
         array $districtResults,
         Collection $districts,
-        Collection $candidates
+        Collection $candidates,
+        array $districtStatuses,
     ): void {
         foreach ($districtResults as $districtData) {
             $districtNumber = (int) $districtData['numeroCirconscription'];
@@ -694,6 +782,7 @@ class ElectionResultsImporter
                 'rejected_vote_rate'              => $districtData['tauxVoteRejete'],
                 'participation_rate'              => $this->parseNullableNumber($districtData['tauxParticipation'] ?? null),
                 'results_final'                   => (bool) $districtData['isResultatsFinaux'],
+                'status'                          => $districtStatuses[$districtNumber]?->value ?? null,
                 'source_updated_at'               => $this->parseNullableSourceDate($districtData['iso8601DateMAJ'] ?? null),
             ]);
 
@@ -724,10 +813,10 @@ class ElectionResultsImporter
             }
 
             CandidateResult::query()->create([
-                'snapshot_id'        => $snapshot->id,
-                'candidate_id'       => $candidate->id,
-                'vote_count'         => $candidateData['nbVoteTotal'],
-                'vote_rate'          => $candidateData['tauxVote'],
+                'snapshot_id'     => $snapshot->id,
+                'candidate_id'    => $candidate->id,
+                'vote_count'      => $candidateData['nbVoteTotal'],
+                'vote_rate'       => $candidateData['tauxVote'],
                 'lead_vote_count' => $candidateData['nbVoteAvance'],
             ]);
         }

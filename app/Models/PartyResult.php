@@ -27,13 +27,14 @@ class PartyResult extends Model
     protected $table   = 'party_results';
     public $timestamps = false;
     protected $casts   = [
-        'snapshot_id'            => 'int',
-        'election_party_id'      => 'int',
-        'vote_count'             => 'int',
-        'vote_rate'              => 'decimal:4',
-        'leading_district_count' => 'int',
-        'won_district_count'     => 'int',
-        'leading_district_rate'  => 'decimal:4',
+        'snapshot_id'              => 'int',
+        'election_party_id'        => 'int',
+        'vote_count'               => 'int',
+        'vote_rate'                => 'decimal:4',
+        'leading_district_count'   => 'int',
+        'won_district_count'       => 'int',
+        'projected_district_count' => 'int',
+        'leading_district_rate'    => 'decimal:4',
     ];
     protected $fillable = [
         'snapshot_id',
@@ -42,6 +43,7 @@ class PartyResult extends Model
         'vote_rate',
         'leading_district_count',
         'won_district_count',
+        'projected_district_count',
         'leading_district_rate',
     ];
 
