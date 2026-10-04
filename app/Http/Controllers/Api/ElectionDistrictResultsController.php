@@ -28,6 +28,7 @@ class ElectionDistrictResultsController extends Controller
                     'source_district_number' => $electoralDistrict->source_district_number,
                     'name'                   => $electoralDistrict->name,
                     'results_final'          => false,
+                    'status'                 => null,
                 ],
                 'candidates' => [],
             ]);
