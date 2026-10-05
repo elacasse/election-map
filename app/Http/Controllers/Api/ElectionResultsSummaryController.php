@@ -71,6 +71,8 @@ class ElectionResultsSummaryController extends Controller
                         'won_district_count'       => 0,
                         'projected_district_count' => 0,
                         'leading_district_count'   => 0,
+                        'vote_rate'                => 0,
+                        'vote_count'               => 0,
                     ]
                 );
 
