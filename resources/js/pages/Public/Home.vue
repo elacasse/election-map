@@ -708,6 +708,19 @@ onUnmounted(() => {
                     </div>
 
                     <div class="party-seats">
+                        <span
+                            v-if="
+                                index === 0 &&
+                                selectedDistrictResults.district.status !== null
+                            "
+                        >
+                            {{
+                                districtStatusLabel(
+                                    selectedDistrictResults.district.status,
+                                )
+                            }}
+                        </span>
+
                         <strong>
                             {{
                                 candidate.vote_count?.toLocaleString('fr-CA') ??
@@ -723,19 +736,6 @@ onUnmounted(() => {
                                 })
                             }}
                             %
-                        </span>
-
-                        <span
-                            v-if="
-                                index === 0 &&
-                                selectedDistrictResults.district.status !== null
-                            "
-                        >
-                            {{
-                                districtStatusLabel(
-                                    selectedDistrictResults.district.status,
-                                )
-                            }}
                         </span>
                     </div>
                 </div>

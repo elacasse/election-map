@@ -234,25 +234,25 @@ useElectionSnapshotUpdates(() => {
     height: 360px;
 
     overflow: hidden;
+
     background: transparent;
     color: #ffffff;
 }
 
 .party-results {
-    width: 1920px;
-    height: 360px;
-
     display: flex;
     gap: 0;
+
+    width: 1920px;
+    height: 360px;
 }
 
 .party-card {
-    height: 360px;
-
     display: flex;
     flex: 1 1 0;
 
     min-width: 0;
+    height: 360px;
 
     color: #ffffff;
 }
@@ -262,25 +262,26 @@ useElectionSnapshotUpdates(() => {
 }
 
 .party-content {
-    flex: 1;
-
     display: flex;
+    flex: 1;
     flex-direction: column;
     justify-content: space-between;
 
+    min-width: 0;
     padding: 22px 24px;
 }
 
 .party-name {
-    height: 80px;
-
     display: flex;
     align-items: flex-start;
 
-    font-size: 22px;
-    font-weight: 800;
+    height: 80px;
 
     overflow-wrap: anywhere;
+
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.1;
 
     text-shadow: 0 1px 2px rgb(0 0 0 / 35%);
 }
@@ -291,65 +292,16 @@ useElectionSnapshotUpdates(() => {
     line-height: 40px;
 }
 
-.party-score {
-    align-self: flex-end;
-
-    font-size: 48px;
-    font-weight: 900;
-    line-height: 1;
-
-    text-align: right;
-
-    text-shadow: 0 1px 2px rgb(0 0 0 / 35%);
-}
-
-.party-card.leader .party-score {
-    font-size: 70px;
-}
-
-.party-result {
-    align-self: flex-end;
-
-    text-align: right;
-}
-
-.party-score {
-    font-size: 48px;
-    font-weight: 900;
-    line-height: 1;
-    text-shadow: 0 1px 2px rgb(0 0 0 / 35%);
-}
-
-.party-score-label {
-    margin-top: 8px;
-
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1;
-
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-
-    opacity: 0.9;
-}
-
-.party-card.leader .party-score {
-    font-size: 58px;
-}
-
-.party-card.leader .party-score-label {
-    font-size: 18px;
-}
-
 .party-footer {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
 }
 
 .party-votes {
     min-width: 0;
+
     text-align: left;
 }
 
@@ -357,6 +309,8 @@ useElectionSnapshotUpdates(() => {
     font-size: 48px;
     font-weight: 900;
     line-height: 0.9;
+
+    white-space: nowrap;
 
     text-shadow: 0 1px 2px rgb(0 0 0 / 35%);
 }
@@ -374,8 +328,11 @@ useElectionSnapshotUpdates(() => {
 }
 
 .party-result {
-    flex: 0 0 auto;
-    text-align: right;
+    align-self: stretch;
+
+    min-width: 0;
+
+    text-align: left;
 }
 
 .party-score {
@@ -383,15 +340,19 @@ useElectionSnapshotUpdates(() => {
     font-weight: 900;
     line-height: 0.9;
 
+    white-space: nowrap;
+
     text-shadow: 0 1px 2px rgb(0 0 0 / 35%);
 }
 
 .party-score-label {
     margin-top: 8px;
 
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     line-height: 1;
+
+    white-space: nowrap;
 
     text-transform: uppercase;
     letter-spacing: 0.4px;
@@ -409,6 +370,25 @@ useElectionSnapshotUpdates(() => {
 }
 
 .party-card.leader .party-score-label {
-    font-size: 18px;
+    font-size: 17px;
+}
+
+.banner-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 1920px;
+    height: 360px;
+
+    font-size: 32px;
+    font-weight: 700;
+
+    background: #222222;
+    color: #ffffff;
+}
+
+.banner-error {
+    font-weight: 800;
 }
 </style>

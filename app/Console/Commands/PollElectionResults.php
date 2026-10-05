@@ -39,7 +39,7 @@ class PollElectionResults extends Command
         );
 
         if (!$enabled) {
-            if (config('app.env') === 'local') {
+            if (config('app.env') === 'local' && config('app.verbose')) {
                 $this->info(
                     "[$now] Election results collection is disabled for $year."
                 );
