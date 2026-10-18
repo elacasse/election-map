@@ -22,24 +22,14 @@ class ElectionDistrictResultsController extends Controller
             ->latestSnapshot()
             ->first();
 
-        if ($snapshot === null) {
-            return response()->json([
-                'district' => [
-                    'source_district_number' => $electoralDistrict->source_district_number,
-                    'name'                   => $electoralDistrict->name,
-                    'results_final'          => false,
-                    'status'                 => null,
-                ],
-                'candidates' => [],
-            ]);
-        }
+        $districtResult = $snapshot
+            ? DB::table('district_results')
+                ->where('snapshot_id', $snapshot->id)
+                ->where('electoral_district_id', $electoralDistrict->id)
+                ->first()
+            : null;
 
-        $districtResult = DB::table('district_results')
-            ->where('snapshot_id', $snapshot->id)
-            ->where('electoral_district_id', $electoralDistrict->id)
-            ->first();
-
-        $candidates = DB::table('candidates')
+        $candidatesQuery = DB::table('candidates')
             ->select([
                 'candidates.id',
                 'candidates.first_name',
@@ -47,30 +37,12 @@ class ElectionDistrictResultsController extends Controller
                 'election_parties.name as party_name',
                 'election_parties.abbreviation as party_abbreviation',
                 'election_parties.color as party_color',
-                'candidate_results.vote_count',
-                'candidate_results.vote_rate',
             ])
             ->leftJoin(
                 'election_parties',
                 'election_parties.id',
                 '=',
                 'candidates.election_party_id'
-            )
-            ->leftJoin(
-                'candidate_results',
-                function ($join) use ($snapshot): void {
-                    $join
-                        ->on(
-                            'candidate_results.candidate_id',
-                            '=',
-                            'candidates.id'
-                        )
-                        ->where(
-                            'candidate_results.snapshot_id',
-                            '=',
-                            $snapshot->id
-                        );
-                }
             )
             ->where(
                 'candidates.electoral_district_id',
@@ -79,8 +51,38 @@ class ElectionDistrictResultsController extends Controller
             ->where(
                 'candidates.election_id',
                 $election->id
-            )
-            ->orderByDesc('candidate_results.vote_count')
+            );
+
+        if ($snapshot !== null) {
+            $candidatesQuery
+                ->addSelect([
+                    'candidate_results.vote_count',
+                    'candidate_results.vote_rate',
+                ])
+                ->leftJoin(
+                    'candidate_results',
+                    function ($join) use ($snapshot): void {
+                        $join
+                            ->on(
+                                'candidate_results.candidate_id',
+                                '=',
+                                'candidates.id'
+                            )
+                            ->where(
+                                'candidate_results.snapshot_id',
+                                '=',
+                                $snapshot->id
+                            );
+                    }
+                )
+                ->orderByDesc('candidate_results.vote_count');
+        } else {
+            $candidatesQuery->selectRaw(
+                'NULL as vote_count, NULL as vote_rate'
+            );
+        }
+
+        $candidates = $candidatesQuery
             ->orderBy('candidates.last_name')
             ->orderBy('candidates.first_name')
             ->get()

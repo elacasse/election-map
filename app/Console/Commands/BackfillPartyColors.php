@@ -18,16 +18,16 @@ class BackfillPartyColors extends Command
         $colors = [
             0  => '808080', // Indépendants
             2  => '3A7D44', // Bloc pot
-            6  => 'D71920', // Parti libéral du Québec
+            6  => 'A30B09', // Parti libéral du Québec
             7  => 'DB2C1B', // Parti marxiste-léniniste du Québec
-            8  => '1E295C', // Parti québécois
+            8  => '254C97', // Parti québécois
             10 => '9ACD32', // Parti vert du Québec
-            22 => '0055A5', // Parti conservateur du Québec
+            22 => '162952', // Parti conservateur du Québec
             23 => '2D2D2D', // Parti nul
-            27 => '00A7B5', // Coalition avenir Québec
+            27 => '20A5DD', // Coalition avenir Québec
             29 => '6A4C93', // Équipe autonomiste
             37 => '003399', // Parti 51
-            40 => 'F58220', // Québec solidaire
+            40 => 'FF5505', // Québec solidaire
             42 => 'FEDD2E', // Parti culinaire du Québec
 
             99209 => '315C9B', // Union nationale
